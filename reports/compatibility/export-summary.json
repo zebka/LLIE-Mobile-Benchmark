@@ -5,46 +5,63 @@
       "status": "exported",
       "error": "",
       "artifact": "reports\\compatibility\\zero-dce.onnx",
-      "seconds": 0.27,
-      "artifact_bytes": 324639
+      "seconds": 0.65,
+      "artifact_bytes": 324671
     },
     {
       "candidate": "zero-dce:ort-parity",
       "status": "passed",
       "error": "",
-      "max_abs_err": 1.7881393432617188e-07
+      "max_abs_err": 2.384185791015625e-07
+    },
+    {
+      "candidate": "zero-dce:manifest",
+      "status": "written",
+      "error": "",
+      "artifact": "reports\\compatibility\\zero-dce.manifest.json"
     },
     {
       "candidate": "zero-dce:litert",
       "status": "failed",
       "error": "LiteRT tooling not installed: No module named 'ai_edge_litert'",
       "artifact": "",
-      "seconds": 0.0006091594696044922
+      "seconds": 0.0003833770751953125
     },
     {
       "candidate": "sci-medium:onnx",
       "status": "exported",
       "error": "",
       "artifact": "reports\\compatibility\\sci-medium.onnx",
-      "seconds": 0.02,
-      "artifact_bytes": 3167
+      "seconds": 0.04,
+      "artifact_bytes": 3560
     },
     {
       "candidate": "sci-medium:ort-parity",
       "status": "passed",
       "error": "",
-      "max_abs_err": 6.556510925292969e-07
+      "max_abs_err": 1.8477439880371094e-06
+    },
+    {
+      "candidate": "sci-medium:manifest",
+      "status": "written",
+      "error": "",
+      "artifact": "reports\\compatibility\\sci-medium.manifest.json"
     },
     {
       "candidate": "sci-medium:litert",
       "status": "failed",
       "error": "LiteRT tooling not installed: No module named 'ai_edge_litert'",
       "artifact": "",
-      "seconds": 0.0005419254302978516
+      "seconds": 0.0006287097930908203
     }
   ],
   "selected_runtime": {
     "name": "onnxruntime",
     "basis": "2/2 models passed host parity at <=1e-3"
-  }
+  },
+  "study_input_size": [
+    3,
+    400,
+    600
+  ]
 }

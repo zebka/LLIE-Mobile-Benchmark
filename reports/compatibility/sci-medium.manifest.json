@@ -1,0 +1,35 @@
+{
+  "model_id": "sci-medium",
+  "artifact": "sci-medium.onnx",
+  "precision": "float32",
+  "input": {
+    "width": 600,
+    "height": 400
+  },
+  "output": {
+    "width": 600,
+    "height": 400
+  },
+  "preprocessing": {
+    "steps": [
+      "rgb",
+      "normalize_0_1",
+      "nchw"
+    ]
+  },
+  "channel_order": "RGB",
+  "input_range": [
+    0.0,
+    1.0
+  ],
+  "tensor_layout": "NCHW",
+  "output_range": [
+    0.0,
+    1.0
+  ],
+  "tiling": {
+    "tile_width": 512,
+    "tile_height": 512,
+    "overlap": 32
+  }
+}

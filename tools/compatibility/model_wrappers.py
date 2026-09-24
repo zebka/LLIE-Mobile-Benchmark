@@ -54,9 +54,11 @@ def _loss_function_shim() -> None:
     sys.modules["loss"] = loss_mod
 
 
-def make_parity_input(seed: int = 7) -> torch.Tensor:
+def make_parity_input(
+    seed: int = 7, size: tuple[int, int, int] = PARITY_INPUT_SIZE
+) -> torch.Tensor:
     generator = torch.Generator().manual_seed(seed)
-    return torch.rand((1, *PARITY_INPUT_SIZE), generator=generator, dtype=torch.float32)
+    return torch.rand((1, *size), generator=generator, dtype=torch.float32)
 
 
 def load_zero_dce() -> torch.nn.Module:
@@ -84,8 +86,8 @@ def zero_dce_reference_output(model: torch.nn.Module, x: torch.Tensor) -> torch.
 
 def sci_reference_output(model: torch.nn.Module, x: torch.Tensor) -> torch.Tensor:
     with torch.no_grad():
-        illu, _ = model(x)
-    return illu
+        _, enhanced = model(x)
+    return enhanced
 
 
 def assert_parity(reference: torch.Tensor, candidate: torch.Tensor, label: str) -> float:

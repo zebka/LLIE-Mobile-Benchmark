@@ -73,6 +73,10 @@ def try_onnx_export(name: str, model, input_tensor) -> dict:
             str(artifact),
             input_names=["input"],
             output_names=["output"],
+            dynamic_axes={
+                "input": {0: "batch", 2: "height", 3: "width"},
+                "output": {0: "batch", 2: "height", 3: "width"},
+            },
             dynamo=False,
         )
         record["artifact"] = str(artifact.relative_to(ROOT))
@@ -114,14 +118,14 @@ def try_litert_export(name: str, model, input_tensor) -> dict:
     return record
 
 
-def parity_vs_torch(name: str, model, artifact_path: Path, reference) -> dict:
+def parity_vs_torch(name: str, model, artifact_path: Path, reference, input_tensor) -> dict:
     record: dict = {"candidate": f"{name}:ort-parity", "status": "failed", "error": "", "max_abs_err": None}
     try:
         import onnxruntime as ort
         import numpy as np
 
         session = ort.InferenceSession(str(artifact_path), providers=["CPUExecutionProvider"])
-        x = make_parity_input().numpy()
+        x = input_tensor.numpy()
         output = session.run(None, {"input": x})[0]
         if output.ndim == 4 and output.shape[1] not in (1, 3, 8, 24):
             output = output.transpose(0, 3, 1, 2)
@@ -134,24 +138,59 @@ def parity_vs_torch(name: str, model, artifact_path: Path, reference) -> dict:
     return record
 
 
+STUDY_WIDTH = 600
+STUDY_HEIGHT = 400
+STUDY_INPUT_SIZE = (3, STUDY_HEIGHT, STUDY_WIDTH)
+
+
+def write_manifest(name: str) -> dict:
+    """Write the schema-shaped manifest next to the exported artifact."""
+    from jsonschema import validate
+
+    manifest = {
+        "model_id": name,
+        "artifact": f"{name}.onnx",
+        "precision": "float32",
+        "input": {"width": STUDY_WIDTH, "height": STUDY_HEIGHT},
+        "output": {"width": STUDY_WIDTH, "height": STUDY_HEIGHT},
+        "preprocessing": {"steps": ["rgb", "normalize_0_1", "nchw"]},
+        "channel_order": "RGB",
+        "input_range": [0.0, 1.0],
+        "tensor_layout": "NCHW",
+        "output_range": [0.0, 1.0],
+        "tiling": {"tile_width": 512, "tile_height": 512, "overlap": 32},
+    }
+    schema = json.loads((ROOT / "protocol" / "model-manifest.schema.json").read_text(encoding="utf-8"))
+    validate(instance=manifest, schema=schema)
+    path = OUT_DIR / f"{name}.manifest.json"
+    path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    return {"candidate": f"{name}:manifest", "status": "written", "error": "", "artifact": str(path.relative_to(ROOT))}
+
+
 def main() -> int:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    summary: dict = {"candidates": [], "selected_runtime": None}
+    summary: dict = {"candidates": [], "selected_runtime": None, "study_input_size": list(STUDY_INPUT_SIZE)}
 
     zero_dce = load_zero_dce()
     sci = load_sci_medium()
-    x = make_parity_input()
+    x = make_parity_input(size=STUDY_INPUT_SIZE)
 
     for name, model, reference, wrapper in (
         ("zero-dce", zero_dce, zero_dce_reference_output(zero_dce, x), _ZeroDCEEnhanced(zero_dce)),
-        ("sci-medium", sci, sci_reference_output(sci, x), _SingleOutput(sci, 0)),
+        ("sci-medium", sci, sci_reference_output(sci, x), _SingleOutput(sci, 1)),
     ):
         onnx_record = try_onnx_export(name, wrapper, x)
         summary["candidates"].append(onnx_record)
         if onnx_record["status"] == "exported":
             summary["candidates"].append(
-                parity_vs_torch(name, model, OUT_DIR / f"{name}.onnx", reference)
+                parity_vs_torch(name, model, OUT_DIR / f"{name}.onnx", reference, x)
             )
+            try:
+                summary["candidates"].append(write_manifest(name))
+            except Exception as exc:
+                summary["candidates"].append(
+                    {"candidate": f"{name}:manifest", "status": "failed", "error": f"{type(exc).__name__}: {exc}"}
+                )
         summary["candidates"].append(try_litert_export(name, model, x))
 
     exported = [c for c in summary["candidates"] if c["candidate"].endswith(":ort-parity") and c["status"] == "passed"]
