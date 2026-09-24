@@ -30,8 +30,30 @@
 
 در فاز عمومی، ابتدا باید محدودیت‌های اجرایی ازپیش‌اعلام‌شده پاس شوند؛ سپس کیفیت مدل‌های واجدشرایط امتیاز می‌گیرد. عددهای خام، نمودارهای پارتو و نتیجه‌ی مدل‌های خارج از بودجه نیز منتشر می‌شوند. سنجه‌های بدون مرجع و ارزیابی انسانی جدا از امتیاز اصلی گزارش خواهند شد.
 
+## ابزار میزبان (`host/`)
+
+```bash
+cd host
+pip install -e ".[test]"
+llie-bench doctor                 # بررسی ADB و چاپ نمایه‌ی دستگاه (بدون شماره‌ی سریال)
+llie-bench install app-debug.apk  # نصب APK
+llie-bench push models/zero-dce.onnx /sdcard/models/zero-dce.onnx
+llie-bench run --model zero-dce   # یک فرمان batch تکی؛ زمان‌سنجی فقط روی گوشی
+llie-bench collect /sdcard/Android/data/.../files/results results/
+python -m pytest -q               # تست‌های شبیه‌سازی‌شده‌ی ADB
+```
+
 ## وضعیت
 
 خلاصه‌ی فاز اول در `PHASE_1.md`، طرح فنیِ تأییدشده در `design.md` و برنامه‌ی اجرایی جزئی در `docs/superpowers/plans/2026-09-24-mobile-llie-phase1.md` ثبت شده‌اند.
 
-هنوز پروژه‌ی اندروید، runtime نهایی، مدل‌های دقیق گوشی‌های مرجع فاز دوم و حدود بودجه‌ی هر دستگاه تثبیت نشده‌اند. ADB در محیط رایانه فعلاً نصب یا در PATH نیست. گام بعدی، آماده‌سازی ADB، ثبت نسخه‌ی Android گوشی و آزمون سازگاری قالب‌های ONNX و LiteRT با چند مدل منتخب است.
+انجام‌شده:
+- Task 2: قراردادهای `protocol/*.schema.json` و ماژول `host/src/llie_bench/report.py` (۱۲ تست سبز).
+- Task 3: گذرِ سازگاری ONNX برای هر دو مدل (zero-dce و SCI-medium) با parity زیر `1e-3`؛ تصمیم موقت runtime: ONNX Runtime (`reports/runtime-decision.md`)، تأیید نهایی منوط به تست دستگاه.
+- Task 4: اسکلت پروژه‌ی اندروید (`android/`، ONNX Runtime EP، زمان‌سنج درون‌برنامه‌ای با `SystemClock.elapsedRealtimeNanos`، تست‌های واحد) و جریان CI (`.github/workflows/android-ci.yml`) که تست‌ها را اجرا و APK را به‌صورت artifact آپلود می‌کند.
+- Task 5: کنترل‌گر ADB میزبان (`adb.py`، `device.py`، `cli.py`؛ ۱۴ تست با runner جعلی سبز).
+
+باقی‌مانده:
+- تأیید سبز شدن CI و دریافت APK از artifact.
+- Task 6: سنجه‌های کیفیت میزبان و تولید گزارش.
+- Task 7: مطالعه‌ی روی گوشی واقعی — نیازمند اتصال Nothing Phone (2a) با USB debugging؛ ADB هنوز در این محیط نصب نیست.
