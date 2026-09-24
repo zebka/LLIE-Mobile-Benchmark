@@ -30,7 +30,8 @@ class BenchmarkExecutor(
             ?: return RunOutcome(false, File(context.filesDir, "$modelId-run.json"), "no external files dir")
         val resultsDir = File(base, "results")
         val suffix = if (backend == "cpu") "" else "-$backend"
-        val outputsDirName = if (backend == "cpu") "outputs" else "outputs-$backend"
+        // Per-model+backend outputs dir so parallel/sequential models never overwrite.
+        val outputsDirName = "outputs-$modelId$suffix"
         val outputsDir = File(resultsDir, outputsDirName)
         val resultFile = File(resultsDir, "$modelId$suffix-run.json")
         val statusFile = File(resultsDir, "$modelId$suffix.status")

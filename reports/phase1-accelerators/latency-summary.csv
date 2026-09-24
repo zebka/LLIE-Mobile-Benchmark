@@ -1,0 +1,7 @@
+model_id,backend,load_ms,model_median_ms,model_p95_ms,e2e_median_ms,pss_peak_mb,success,failure_reason,thermal_before,thermal_after
+zero-dce,cpu,240.508307,2324.933539,2375.489,2324.952231,613.5283203125,True,,light,light
+sci-medium,cpu,122.728231,70.404231,85.285154,70.416923,218.68359375,True,,light,light
+zero-dce,nnapi,155.332308,2283.371693,2359.887077,2283.391461,604.1396484375,True,,light,light
+zero-dce,xnnpack,108.976307,909.82223,2424.045231,909.832616,590.8623046875,True,,light,light
+sci-medium,nnapi,117.276923,28.488923,33.595154,28.493231,183.1943359375,True,,light,light
+sci-medium,xnnpack,96.668308,28.953616,32.697846,28.962693,214.2841796875,True,,light,light

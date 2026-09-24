@@ -40,6 +40,8 @@ object ImageCodec {
         file.outputStream().use { stream ->
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
         }
+        // World-readable so host `adb pull` works when the file is app-created.
+        file.setReadable(true, false)
         bitmap.recycle()
     }
 }
