@@ -29,8 +29,9 @@ class BenchmarkExecutor(
         val base = context.getExternalFilesDir(null)
             ?: return RunOutcome(false, File(context.filesDir, "$modelId-run.json"), "no external files dir")
         val resultsDir = File(base, "results")
-        val outputsDir = File(resultsDir, "outputs")
         val suffix = if (backend == "cpu") "" else "-$backend"
+        val outputsDirName = if (backend == "cpu") "outputs" else "outputs-$backend"
+        val outputsDir = File(resultsDir, outputsDirName)
         val resultFile = File(resultsDir, "$modelId$suffix-run.json")
         val statusFile = File(resultsDir, "$modelId$suffix.status")
         statusFile.parentFile?.mkdirs()
