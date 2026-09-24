@@ -62,7 +62,7 @@ Latency rows: `phase1-results/latency.csv` (median/p95 per image from `results_t
 
 1. **sci-medium is ~32× faster than zero-dce** on this CPU at 600×400 (median 70 ms vs 2325 ms) while using ~2.8× less peak PSS (219 MB vs 614 MB). Quality is statistically indistinguishable on this 15-image set.
 2. **Neither model reaches high paired-reference quality** on eval15 (SSIM ≈ 0.53–0.56). This is expected for zero-reference/heuristic LLIE against a single paired ground truth; the numbers are reported as measured, not as a ranking claim.
-3. **CPU only.** NNAPI/GPU/NPU delegates were not exercised in this phase; LiteRT tooling was absent on the host machine (recorded as a failed candidate, not hidden).
+3. **Accelerator backends exercised separately.** NNAPI and XNNPACK ran both models with schema-valid results but no effective speedup (CPU-level latency, byte-identical outputs); full numbers and the unresolved earlier-batch variance are in `phase1-accelerators.md`. LiteRT tooling was absent on the host machine (recorded as a failed candidate, not hidden).
 4. **Thermal stayed at `light`** for both runs; no throttling event was recorded. A cool-down re-run was not required for schema validity but is listed as optional follow-up.
 5. **Single device, single resolution.** High-resolution stress inputs and multi-device comparison belong to Phase 2.
 

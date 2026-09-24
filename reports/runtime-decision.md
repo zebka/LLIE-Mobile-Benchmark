@@ -19,7 +19,8 @@
 
 - [x] Phone loads both artifacts with ONNX Runtime 1.19.2 (CPU EP)
 - [x] App output matches host ONNX Runtime output on eval15 (device/host mean abs diff after HWC→CHW fix: ~0; before fix: ~60)
-- [x] Available backend recorded as `cpu`; NNAPI/GPU/NPU not exercised in Phase 1
+- [x] Available backends recorded as `cpu`, `nnapi`, `xnnpack` (schema enum; `gpu`/`npu` labels route to the NNAPI EP and were not run as distinct paths)
+- [x] NNAPI and XNNPACK exercised on-device (eval15, both models): all 4 combos `success=true`, schema-valid, 15/15 outputs each — latencies at CPU level with byte-identical outputs (see `phase1-accelerators.md`)
 - [x] Both runs `success=true`, `failure_reason` empty, 15/15 output paths present
 
 Artifacts: `reports/compatibility/*.onnx`, `reports/compatibility/export-summary.json`, `reports/phase1-results/`.

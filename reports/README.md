@@ -8,6 +8,8 @@
 - `runtime-decision.md` — تصمیم runtime با شواهد و چک‌لیست تأیید دستگاه. انتخاب فعلی: ONNX Runtime (تأییدشده روی Nothing Phone 2a).
 - `phase1-nothing-phone-2a.md` — گزارش مطالعه‌ی موردی فاز اول: پروفایل دستگاه، زمان/حافظه/کیفیت هر مدل، محدودیت‌ها.
 - `phase1-results/` — خروجی خام فاز اول: برای هر مدل `run.json` معتبرِ schema، `status.txt`، `outputs/*.png` (۱۵ تصویر)، `metrics.csv` و `latency.csv`؛ به‌علاوه‌ی `metrics-summary.json` و `latency.csv` تجمیعی.
+- `phase1-accelerators.md` — گزارش بخش جداگانه‌ی شتاب‌دهنده‌ها (NNAPI/XNNPACK روی Nothing Phone 2a): بدون شتاب مؤثر، خروجی بایت‌به‌بایت برابر CPU.
+- `phase1-accelerators/` — خروجی خام شتاب‌دهنده‌ها: برای هر ترکیب مدل×backend (`<model>-<backend>/`) شامل `run.json`، `status.txt`، `outputs/*.png` (۱۵ تصویر)، `metrics.csv` و `latency.csv`؛ به‌علاوه‌ی `latency.csv`، `latency-summary.csv` و `metrics-summary.json` تجمیعی.
 
 ## قرارداد داده
 
