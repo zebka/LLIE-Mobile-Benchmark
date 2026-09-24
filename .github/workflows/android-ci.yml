@@ -23,7 +23,9 @@ jobs:
 
       - name: Unit tests + assembleDebug
         working-directory: android
-        run: ./gradlew testDebugUnitTest assembleDebug --stacktrace
+        run: |
+          chmod +x gradlew
+          ./gradlew testDebugUnitTest assembleDebug --stacktrace
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
