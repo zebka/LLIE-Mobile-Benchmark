@@ -191,7 +191,9 @@ def run_combo(
     adb.shell("chmod", "666", result_remote, status_remote)
     for outputs_dir in candidate_outputs_dirs(model_id, backend):
         prime_outputs(adb, outputs_dir, names)
-    adb.start_benchmark(model_id=model_id, image_set=image_set, backend=backend)
+    adb.start_benchmark(
+        model_id=model_id, image_set=image_set, backend=backend, image_names=names or None
+    )
     status = wait_status(
         adb, status_remote, timeout=timeout, poll_interval=poll_interval, sleep=sleep
     )

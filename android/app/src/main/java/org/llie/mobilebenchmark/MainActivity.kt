@@ -49,6 +49,11 @@ class MainActivity : AppCompatActivity() {
         }
         val imageSet = intent.getStringExtra(EXTRA_IMAGE_SET) ?: "eval15"
         val backend = intent.getStringExtra(EXTRA_BACKEND)?.takeIf { it.isNotBlank() } ?: "cpu"
+        val imageNames = intent.getStringExtra(EXTRA_IMAGE_NAMES)
+            ?.split(",")
+            ?.map { it.trim() }
+            ?.filter { it.isNotEmpty() }
+            ?.takeIf { it.isNotEmpty() }
         synchronized(runningLock) {
             if (isRunning) {
                 status.text = "already running"
@@ -59,7 +64,7 @@ class MainActivity : AppCompatActivity() {
         status.text = "running $modelId/$backend on $imageSet ..."
         Thread {
             val outcome = try {
-                BenchmarkExecutor(applicationContext).run(modelId, imageSet, backend)
+                BenchmarkExecutor(applicationContext).run(modelId, imageSet, backend, imageNames)
             } catch (t: Throwable) {
                 BenchmarkExecutor.RunOutcome(false, File(filesDir, "$modelId-run.json"), t.toString())
             }
@@ -90,6 +95,7 @@ class MainActivity : AppCompatActivity() {
         const val EXTRA_MODEL_ID = "model_id"
         const val EXTRA_IMAGE_SET = "image_set"
         const val EXTRA_BACKEND = "backend"
+        const val EXTRA_IMAGE_NAMES = "image_names"
         private val runningLock = Any()
         @Volatile private var isRunning = false
     }

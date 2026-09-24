@@ -1,0 +1,54 @@
+{
+  "model_id": "mobileie-6ch",
+  "artifact_sha256": "5c3978c66ffe049b280013886e07a9d35cda495180b5031c609d750ce7c0ef9d",
+  "device": {
+    "model": "A142",
+    "android_release": "16",
+    "android_sdk": 36,
+    "build_fingerprint": "Nothing\/Pacman\/Pacman:16\/BP2A.250605.031.A3\/2608130941:user\/release-keys",
+    "soc": "MT6886"
+  },
+  "runtime": {
+    "name": "onnxruntime",
+    "version": "1.19.2"
+  },
+  "backend": "nnapi",
+  "precision": "float32",
+  "image_ids": [
+    "1.png"
+  ],
+  "warmup_count": 5,
+  "load_time_ns": 166203385,
+  "images": [
+    {
+      "image_id": "1.png",
+      "model_ns": [
+        276197461,
+        274252923,
+        274966385
+      ],
+      "e2e_ns": [
+        276207692,
+        274259308,
+        274973231
+      ]
+    }
+  ],
+  "pss": {
+    "samples_mb": [
+      38.271484375,
+      168.5048828125,
+      241.2236328125,
+      310.98828125,
+      295.177734375,
+      317.4814453125
+    ],
+    "peak_mb": 317.4814453125
+  },
+  "thermal": {
+    "before": "none",
+    "after": "none"
+  },
+  "output_paths": [],
+  "success": true
+}

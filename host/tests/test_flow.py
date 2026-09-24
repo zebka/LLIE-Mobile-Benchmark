@@ -279,6 +279,45 @@ def test_setup_device_rejects_missing_artifact(tmp_path):
         setup_device(adb, compat_dir=tmp_path, images_dir=tmp_path)
 
 
+def test_start_benchmark_sends_image_names_extra():
+    from llie_bench.adb import Adb
+
+    runner = FakeRunner()
+    adb = Adb(runner=runner, serial=SERIAL)
+    adb.start_benchmark(model_id="zero-dce", image_names=["1.png", "2.png"])
+    call = runner.calls[-1]
+    idx = call.index("image_names")
+    assert call[idx + 1] == "1.png,2.png"
+
+
+def test_start_benchmark_omits_image_names_when_none():
+    from llie_bench.adb import Adb
+
+    runner = FakeRunner()
+    adb = Adb(runner=runner, serial=SERIAL)
+    adb.start_benchmark(model_id="zero-dce")
+    assert "image_names" not in runner.calls[-1]
+
+
+def test_run_combo_forwards_image_names_to_start(tmp_path):
+    from llie_bench.flow import run_combo
+
+    runner = MaterializingRunner()
+    adb = Adb(runner=runner, serial=SERIAL)
+    run_combo(
+        adb,
+        model_id="zero-dce",
+        backend="cpu",
+        image_names=["1.png", "2.png"],
+        out_dir=tmp_path / "zero-dce",
+        poll_interval=0,
+        sleep=lambda s: None,
+    )
+    starts = [c for c in runner.calls if "am" in c and "start" in c]
+    assert len(starts) == 1
+    assert "1.png,2.png" in starts[0]
+
+
 def test_run_combo_end_to_end(tmp_path):
     from llie_bench.flow import run_combo
 

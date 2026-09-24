@@ -124,11 +124,19 @@ class Adb:
         self._run("pull", remote, str(local))
 
     def start_benchmark(
-        self, model_id: str, image_set: str = "eval15", backend: str = "cpu"
+        self,
+        model_id: str,
+        image_set: str = "eval15",
+        backend: str = "cpu",
+        image_names: list[str] | None = None,
     ) -> None:
-        """Kick off one on-device batch run; timing happens on the phone."""
-        self._run(
-            "shell",
+        """Kick off one on-device batch run; timing happens on the phone.
+
+        image_names, when given, is sent as an explicit ordered list so the
+        app never depends on directory listing (which scoped storage can
+        filter); missing names are recorded as per-image failures on-device.
+        """
+        extras: list[str] = [
             "am",
             "start",
             "-n",
@@ -144,4 +152,7 @@ class Adb:
             "--es",
             "backend",
             backend,
-        )
+        ]
+        if image_names:
+            extras += ["--es", "image_names", ",".join(image_names)]
+        self._run("shell", *extras)

@@ -25,7 +25,12 @@ class BenchmarkExecutor(
 
     data class RunOutcome(val success: Boolean, val resultFile: File, val detail: String)
 
-    fun run(modelId: String, imageSet: String, backend: String = "cpu"): RunOutcome {
+    fun run(
+        modelId: String,
+        imageSet: String,
+        backend: String = "cpu",
+        imageNames: List<String>? = null,
+    ): RunOutcome {
         val base = context.getExternalFilesDir(null)
             ?: return RunOutcome(false, File(context.filesDir, "$modelId-run.json"), "no external files dir")
         val resultsDir = File(base, "results")
@@ -60,12 +65,23 @@ class BenchmarkExecutor(
             val manifest = loaded.manifest
 
             val imagesDir = File(base, "images/$imageSet")
-            val imageFiles = imagesDir.listFiles { f -> f.isFile && f.extension.equals("png", true) }
-                ?.sortedBy { it.name }
-                .orEmpty()
+            val imageFiles = resolveImageFiles(imagesDir, imageNames)
             if (imageFiles.isEmpty()) throw IllegalStateException("no images in $imageSet")
 
             for (file in imageFiles) {
+                if (!file.isFile) {
+                    results.add(
+                        ImageRunResult(
+                            imageId = file.name,
+                            modelNs = emptyList(),
+                            e2eNs = emptyList(),
+                            output = null,
+                            success = false,
+                            failureReason = "input missing: ${file.name}",
+                        )
+                    )
+                    continue
+                }
                 val bitmap = ImageCodec.decodeFile(file.absolutePath)
                 if (bitmap.width != manifest.inputWidth || bitmap.height != manifest.inputHeight) {
                     results.add(
@@ -130,6 +146,18 @@ class BenchmarkExecutor(
     }
 
     companion object {
+        /**
+         * Resolve the ordered input list. An explicit host-supplied list wins
+         * over directory listing, because scoped storage can filter
+         * directory listings while direct file opens keep working.
+         */
+        fun resolveImageFiles(imagesDir: File, imageNames: List<String>?): List<File> {
+            if (!imageNames.isNullOrEmpty()) return imageNames.map { File(imagesDir, it) }
+            return imagesDir.listFiles { f -> f.isFile && f.extension.equals("png", true) }
+                ?.sortedBy { it.name }
+                .orEmpty()
+        }
+
         fun sha256Of(file: File): String {
             if (!file.isFile) return "0".repeat(64)
             val digest = MessageDigest.getInstance("SHA-256")
