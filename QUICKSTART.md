@@ -1,74 +1,77 @@
-# QUICKSTART — اجرای بنچمارک در ۴ دستور
+# QUICKSTART — full benchmark in 4 commands
 
-همه‌ی دانش اجرایی (ترتیب push، فایل موقت 666، force-stop، انتظار وضعیت،
-pull بین اجراها) داخل خود ابزار است. فقط همین ۴ دستور را به ترتیب بزن.
+All operational knowledge (push order, 666 placeholder files, force-stop,
+status polling, pull-between-runs) lives inside the tool. Just run these
+4 commands in order.
 
-## ۰. پیش‌نیاز
+## 0. Prerequisites
 
-- گوشی با USB debugging روشن، وصل با کابل (یک گوشی کافی است)
-- Python ‎۳.۱۱+‎ و `adb` در PATH
-- APK از CI همین ریپو (`Actions → android-ci → app-debug`)
+- One phone with USB debugging enabled, connected over USB
+- Python 3.11+ and `adb` on PATH
+- APK from this repo's CI (`Actions → android-ci → app-debug`)
 
-## ۱. نصب ابزار میزبان
+## 1. Install the host tool
 
 ```bash
 cd 07_mobile_benchmark/host
 pip install -e ".[test]"
-pip install -e ".[metrics]"   # فقط برای PSNR/SSIM/LPIPS (اولین بار وزن alex دانلود می‌شود)
+pip install -e ".[metrics]"   # only for PSNR/SSIM/LPIPS (downloads alex weights once)
 ```
 
-## ۲. بررسی اتصال + نصب اپ
+## 2. Check connection + install the app
 
 ```bash
-llie-bench doctor                          # باید مدل گوشی را چاپ کند، بدون شماره سریال
+llie-bench doctor                          # must print the phone model, never the serial
 llie-bench install /path/to/app-debug.apk
 ```
 
-## ۳. آماده‌سازی گوشی (مدل‌ها + تصاویر، یک دستور)
+## 3. Stage the phone (models + images, one command)
 
 ```bash
 llie-bench setup --compat-dir ../reports/compatibility --images-dir ../04_datasets/paired/eval15/low
 ```
 
-خروجی موردانتظار: `setup done: 2 models, 15 images (set eval15)`
+Expected output: `setup done: 2 models, 15 images (set eval15)`
 
-## ۴. اجرای ماتریس کامل (مدل × backend)
+## 4. Run the full matrix (model x backend)
 
 ```bash
 llie-bench matrix --out ../reports/my-study
 ```
 
-- به‌طور پیش‌فرض `zero-dce,sci-medium` × ‏`cpu,nnapi,xnnpack` را **ترتیبی** اجرا می‌کند
-  (هر ترکیب zero-dce حدود ۵ دقیقه؛ کل ماتریس حدود ۱۵ دقیقه).
-- زیرمجموعه: `llie-bench matrix --models sci-medium --backends nnapi --out ...`
-- تک‌اجرا: `llie-bench benchmark --model zero-dce --backend xnnpack --out ...`
-- هر ترکیب در `my-study/<model>[-<backend>]/{run.json,status.txt,outputs/*.png}` می‌نشیند.
+- By default runs `zero-dce,sci-medium` x `cpu,nnapi,xnnpack` **sequentially**
+  (each zero-dce combo takes ~5 min; full matrix ~15 min).
+- Subset: `llie-bench matrix --models sci-medium --backends nnapi --out ...`
+- Single run: `llie-bench benchmark --model zero-dce --backend xnnpack --out ...`
+- Each combo lands in `my-study/<model>[-<backend>]/{run.json,status.txt,outputs/*.png}`.
 
-## ۵. ساخت گزارش
+## 5. Build the report
 
 ```bash
 llie-bench report --results-dir ../reports/my-study --ref-dir ../04_datasets/paired/eval15/high
 ```
 
-می‌سازد: `latency.csv`، ‏`latency-summary.csv`، ‏`metrics.csv` هر ترکیب و
-`metrics-summary.json`. بدون `--ref-dir` فقط زمان/حافظه گزارش می‌شود.
+Produces: `latency.csv`, `latency-summary.csv`, per-combo `metrics.csv`,
+and `metrics-summary.json`. Omit `--ref-dir` for latency/memory only.
 
-## قراردادها (حفظ‌شده، لازم نیست حفظ باشی)
+## Conventions (kept for you, nothing to memorize)
 
-- زمان‌سنجی فقط روی گوشی است؛ ADB هرگز داخل حلقه‌ی زمان نیست.
-- `run.json` با `protocol/run-result.schema.json` اعتبارسنجی می‌شود؛ اجرای ناموفق خطا می‌دهد نه سکوت.
-- ابزار خودش فایل‌های موقت shell-owned می‌سازد، بین اجراها `force-stop` می‌کند،
-  وضعیت را تا `done`/`failed` می‌خواند و بلافاصله pull می‌کند (پوشه‌های خروجی مشترک قاطی نمی‌شوند).
+- Timing happens only on the phone; ADB never enters the timing loop.
+- Every `run.json` is validated against `protocol/run-result.schema.json`;
+  a failed run raises an error instead of silently passing.
+- The tool pre-creates shell-owned placeholder files, force-stops the app
+  between runs, polls the status until `done`/`failed`, and pulls immediately
+  (shared on-device output dirs never mix models).
 
-## عیب‌یابی
+## Troubleshooting
 
-| علامت | علت | راه‌حل |
+| Symptom | Cause | Fix |
 |---|---|---|
-| `device unauthorized` | تأیید USB در گوشی زده نشده | روی گوشی Allow بزن، دوباره `doctor` |
-| `no device found` | کابل/درایور | کابل عوض کن، `adb devices` باید `device` نشان دهد |
-| `timed out waiting for ...status` | اپ گیر کرده (`already running`) | خودش `force-stop` می‌کند؛ یک بار دیگر همان دستور را بزن |
-| `run reported success=false` | خطای روی گوشی (مثلاً OOM) | `adb shell logcat -d \| grep llie` را ببین |
-| `Permission denied` در pull دستی | فایل app-owned بدون prime | از `benchmark`/`matrix` استفاده کن (prime خودکار است)؛ دستی انجام نده |
-| LPIPS دانلود نمی‌شود | اینترنت قطع | `--ref-dir` را حذف کن (فقط latency)، بعداً `report` را تکرار کن |
+| `device unauthorized` | USB prompt not accepted | Tap Allow on the phone, run `doctor` again |
+| `no device found` | cable/driver | Swap cable; `adb devices` must show `device` |
+| `timed out waiting for ...status` | app stuck (`already running`) | It force-stops by itself; just re-run the same command |
+| `run reported success=false` | on-device error (e.g. OOM) | Check `adb shell logcat -d \| grep llie` |
+| `Permission denied` on manual pull | app-owned files without priming | Use `benchmark`/`matrix` (priming is automatic); don't pull by hand |
+| LPIPS won't download | offline | Drop `--ref-dir` (latency only), re-run `report` later |
 
-تست‌ها (بدون گوشی): `python -m pytest host/tests tools/compatibility -q`
+Tests (no phone): `python -m pytest host/tests tools/compatibility -q`

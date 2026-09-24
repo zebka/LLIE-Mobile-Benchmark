@@ -47,4 +47,3 @@
 ## اسناد مرتبط
 
 - [طرح فنی](design.md)
-- [برنامه‌ی اجرایی جزئی](docs/superpowers/plans/2026-09-24-mobile-llie-phase1.md)

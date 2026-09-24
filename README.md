@@ -1,70 +1,86 @@
 # LLIE Mobile Deployment Benchmark
 
-پوشه‌ی کار روی بنچمارک استقرار موبایلی برای بهبود تصویر کم‌نور و اجرای مدل‌های منتخب مقاله‌ی مروری.
+Open, reproducible tooling to measure the quality and on-device cost of
+low-light image enhancement (LLIE) models on real phones — so conclusions
+are not limited to parameter counts or server-side runs.
 
-## هدف
+## Phase 1: paper models on one phone
 
-ساخت ابزار باز و بازتولیدپذیر برای سنجش کیفیت و هزینه‌ی اجرای مدل‌های بهبود کم‌نور روی گوشی واقعی؛ به‌گونه‌ای که نتیجه‌ها به تعداد پارامترها یا اجرای سروری محدود نمانند.
+- Goal: run the survey shortlist on a real phone and check deployment feasibility.
+- Device: Nothing Phone (2a). Exact Android version and build are recorded at connect time.
+- Input: fixed photos, targeting full mobile resolution (12 MP stress test).
+- The Android app runs the model on the phone itself and times it in-process.
+- The host tool moves models/data over ADB, starts a run, and collects the
+  report. ADB never sits inside the per-image timing loop.
+- CPU and each supported GPU/NPU-accelerated path are measured separately.
+- Models ship in a standard package with a manifest (input/output spec,
+  numeric precision, pre/post-processing). Format and runtime were picked
+  by a compatibility gate over the candidate models and are versioned.
 
-## فاز اول: ارزیابی مدل‌های مقاله روی یک گوشی
+Phase 1 is a case study; on its own it generalizes to no other phone and
+ranks nothing publicly.
 
-- هدف: اجرای مدل‌های منتخب مقاله‌ی مروری روی یک گوشی واقعی و سنجش اولیه‌ی امکان‌پذیری استقرار.
-- گوشی انتخاب‌شده: Nothing Phone (2a). نسخه‌ی دقیق Android و build هنگام اتصال ثبت می‌شود.
-- ورودی: عکس ثابت با وضوح کامل موبایل، با هدف پشتیبانی از تصاویر حدود ۱۲ مگاپیکسل.
-- اپ اندروید مدل را روی خود گوشی اجرا می‌کند و زمان اجرا را درون اپ اندازه می‌گیرد.
-- ابزار میزبان از طریق ADB مدل و داده را منتقل، آزمون را آغاز و گزارش را دریافت می‌کند. ADB در حلقه‌ی زمان‌سنجی هر تصویر دخالت نمی‌کند.
-- مسیر CPU و مسیر شتاب‌دهنده‌ی GPU/NPU، اگر روی گوشی موجود پشتیبانی شوند، جدا اندازه‌گیری می‌شوند.
-- مدل‌ها با قالب استاندارد و manifest مشخصات ورودی، خروجی، دقت عددی و پیش‌/پس‌پردازش بسته‌بندی می‌شوند. قالب و runtime پس از آزمون سازگاری با مدل‌های شاخص انتخاب و نسخه‌بندی می‌شوند.
+## Phase 2: public benchmark
 
-فاز اول مطالعه‌ی موردی است و به‌تنهایی مبنای ادعای تعمیم‌پذیری به گوشی‌های دیگر یا رتبه‌بندی عمومی نخواهد بود.
+- Official runs on three reference tiers; per-device, per-backend results.
+- Open, reproducible Android runner + ADB controller for other researchers.
+- Overall score is "quality within budget" under pre-announced execution limits.
 
-## فاز دوم: بنچمارک عمومی
+## Reports and metrics
 
-- اجرای رسمی روی سه رده‌ی گوشی مرجع؛ نتیجه‌ها برای هر دستگاه و backend جداگانه منتشر می‌شوند.
-- ابزار اندروید و کنترل‌گر ADB به‌شکل باز و بازتولیدپذیر برای سایر پژوهشگران منتشر می‌شوند.
-- امتیاز کلی بر پایه‌ی «کیفیت در بودجه» و محدودیت‌های اجرایی ازپیش‌اعلام‌شده تعریف می‌شود.
+Each raw report (per model and device) holds image quality, median/p95
+latency, peak memory, real artifact size, weight precision, and sustained-run
+degradation. Official energy numbers require validated power instrumentation
+on reference devices.
 
-## گزارش و سنجه‌ها
+In the public phase, pre-announced execution gates pass first; qualifying
+models then score on quality. Raw numbers, Pareto fronts, and over-budget
+results are published too. No-reference metrics and human ratings are
+reported separately from the main score.
 
-گزارش خام برای هر مدل و دستگاه شامل کیفیت تصویر، میانه و صدک ۹۵ تأخیر، حافظه‌ی اوج، اندازه‌ی واقعی artifact، دقت وزن‌ها و افت کارایی در اجرای پیوسته خواهد بود. سنجش انرژی رسمی باید با ابزار اندازه‌گیری توان روی دستگاه‌های مرجع اعتبارسنجی شود.
+## Host tool (`host/`)
 
-در فاز عمومی، ابتدا باید محدودیت‌های اجرایی ازپیش‌اعلام‌شده پاس شوند؛ سپس کیفیت مدل‌های واجدشرایط امتیاز می‌گیرد. عددهای خام، نمودارهای پارتو و نتیجه‌ی مدل‌های خارج از بودجه نیز منتشر می‌شوند. سنجه‌های بدون مرجع و ارزیابی انسانی جدا از امتیاز اصلی گزارش خواهند شد.
-
-## ابزار میزبان (`host/`)
-
-راهنمای گام‌به‌گام اجرا: [`QUICKSTART.md`](QUICKSTART.md) (۴ دستور: doctor/install،
-setup، ماتریس، گزارش). خلاصه:
+Step-by-step run guide: [`QUICKSTART.md`](QUICKSTART.md) (4 commands:
+doctor/install, setup, matrix, report). Summary:
 
 ```bash
 cd host
-pip install -e ".[test]"      # و برای سنجه‌های کیفیت: pip install -e ".[metrics]"
-llie-bench doctor             # بررسی ADB (بدون چاپ سریال)
+pip install -e ".[test]"      # and for quality metrics: pip install -e ".[metrics]"
+llie-bench doctor             # check ADB (never prints the serial)
 llie-bench install app-debug.apk
 llie-bench setup --compat-dir ../reports/compatibility --images-dir ../04_datasets/paired/eval15/low
-llie-bench matrix --out ../reports/my-study     # همه‌ی مدل × backend، ترتیبی
+llie-bench matrix --out ../reports/my-study     # every model x backend, sequential
 llie-bench report --results-dir ../reports/my-study --ref-dir ../04_datasets/paired/eval15/high
-python -m pytest -q ../tools/compatibility   # تست‌ها (host + سازگاری)، بدون گوشی
+python -m pytest -q ../tools/compatibility   # tests (host + compatibility), no phone needed
 ```
 
-دستورهای سطح پایین (`run`/`collect`/`push`/`metrics`) برای موارد خاص باقی‌اند؛
-برای اجرای عادی فقط `setup`/`benchmark`/`matrix`/`report` لازم است.
+Low-level commands (`run`/`collect`/`push`/`metrics`) remain for special
+cases; normal runs only need `setup`/`benchmark`/`matrix`/`report`.
 
-## وضعیت
+## Status
 
-خلاصه‌ی فاز اول در `PHASE_1.md`، طرح فنیِ تأییدشده در `design.md` و برنامه‌ی اجرایی جزئی در `docs/superpowers/plans/2026-09-24-mobile-llie-phase1.md` ثبت شده‌اند.
+Phase-1 summary in `PHASE_1.md`, frozen technical design in `design.md`.
 
-**فاز اول انجام شد (۲۰۲۶-۰۹-۲۴):**
+**Phase 1 done (2026-09-24):**
 
-- Task 2: قراردادهای `protocol/*.schema.json` و ماژول `host/src/llie_bench/report.py` (۱۲ تست سبز).
-- Task 3: گذرِ سازگاری ONNX برای هر دو مدل (zero-dce و SCI-medium) با parity زیر `1e-3`؛ runtime نهایی: ONNX Runtime 1.19.2 / CPU (`reports/runtime-decision.md`، تأییدشده روی گوشی).
-- Task 4: اسکلت پروژه‌ی اندروید، زمان‌سنج درون‌برنامه‌ای، CI سبز، APK نصب‌شده روی Nothing Phone (2a).
-- Task 5: کنترل‌گر ADB میزبان (۱۴ تست سبز؛ بدون افشای سریال).
-- Task 6: سنجه‌های کیفیت میزبان (PSNR/SSIM/LPIPS، RGBA→RGB، ردِ عدم تطابق ابعاد؛ ۳۹ تست سبز در مجموع host+compatibility).
-- Task 7: مطالعه‌ی روی گوشی واقعی — هر دو مدل با `success=true` و schema معتبر اجرا شدند؛ خروجیها، `run.json`، `metrics.csv` و `latency.csv` در `reports/phase1-results/`؛ گزارش در `reports/phase1-nothing-phone-2a.md`.
+- Task 2: `protocol/*.schema.json` contracts + `host/src/llie_bench/report.py` (12 tests green).
+- Task 3: ONNX compatibility gate for both models (zero-dce and SCI-medium)
+  with parity under `1e-3`; final runtime: ONNX Runtime 1.19.2 / CPU
+  (`reports/runtime-decision.md`, confirmed on-device).
+- Task 4: Android project skeleton, in-app timing, green CI, APK installed
+  on the Nothing Phone (2a).
+- Task 5: host ADB controller (14 tests green; serial never exposed).
+- Task 6: host quality metrics (PSNR/SSIM/LPIPS, RGBA→RGB, shape-mismatch
+  rejection; 39 tests green across host+compatibility).
+- Task 7: real-phone study — both models ran with `success=true` and valid
+  schemas; outputs, `run.json`, `metrics.csv`, `latency.csv` under
+  `reports/phase1-results/`; write-up in `reports/phase1-nothing-phone-2a.md`.
 
-نکته‌های اجرایی:
+Implementation notes:
 
-- خروجیهای PNG دستگاه RGBA هستند؛ متریکها alpha را قبل از مقایسه با مرجع RGB کنار می‌گذارند.
-- layout ورودی مدل NCHW است؛ تبدیل HWC→CHW در `SelectedRuntimeEngine` انجام می‌شود (قبل از اصلاح، اختلاف host/device حدود ۶۰ بود).
-- NNAPI/XNNPACK در بخش جداگانه روی همین گوشی اجرا شدند: بدون شتاب مؤثر، خروجی بایت‌به‌بایت برابر CPU (جزئیات: `reports/phase1-accelerators.md`).
-- نتیجه‌ی تک‌دستگاهی است، رتبه‌بندی عمومی نیست.
+- Device PNG outputs are RGBA; metrics drop alpha before comparing to RGB refs.
+- Model input layout is NCHW; the HWC→CHW conversion lives in
+  `SelectedRuntimeEngine` (before the fix, host/device diff was ~60).
+- NNAPI/XNNPACK ran separately on the same phone: no effective speedup,
+  byte-identical outputs to CPU (details: `reports/phase1-accelerators.md`).
+- Single-device result, not a public ranking.
