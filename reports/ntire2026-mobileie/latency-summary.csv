@@ -1,0 +1,4 @@
+model_id,backend,load_ms,model_median_ms,model_p95_ms,e2e_median_ms,pss_peak_mb,success,failure_reason,thermal_before,thermal_after
+mobileie-6ch,cpu,88.168616,289.185847,363.773,289.191462,428.2880859375,True,,none,none
+mobileie-6ch,nnapi,143.350154,322.563154,369.910154,322.569231,433.1904296875,True,,none,none
+mobileie-6ch,xnnpack,104.576385,327.616539,375.504616,327.623385,425.8681640625,True,,none,none

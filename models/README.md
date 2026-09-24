@@ -8,6 +8,7 @@ in `03_models/thirdparty-weights/`.
 |---|---|---|---|
 | zero-dce | `03_models/thirdparty-weights/ZeroDCE-snapshots/Epoch99.pth` | `reports/compatibility/zero-dce.onnx` | float32 |
 | sci-medium | `03_models/thirdparty-weights/SCI-weights/medium.pt` | `reports/compatibility/sci-medium.onnx` | float32 |
+| mobileie-6ch | MobileIE-6Ch `result/model_best.pt` (Apache-2.0, [upstream](https://github.com/w-xb/MobileIE-6Ch)) | `reports/compatibility/mobileie-6ch.onnx` | float32 |
 
 Manifests live next to each artifact at package time
 (`reports/compatibility/*.manifest.json`), following

@@ -141,7 +141,7 @@ def test_prime_outputs_uses_arg_lists():
 
     prime_outputs(adb, "outputs-nnapi", ["1.png", "2.png"])
     verbs = [c[4] for c in runner.calls]
-    assert verbs == ["mkdir", "rm", "touch", "chmod"]
+    assert verbs == ["mkdir", "chmod", "rm", "touch", "chmod"]
     # no shell metacharacters anywhere: pure argument lists
     for call in runner.calls:
         assert all(";" not in token and ">" not in token for token in call)

@@ -112,6 +112,10 @@ def prime_outputs(adb: Adb, outputs_dir: str, image_names: list[str]) -> None:
     files are unreadable by shell (Permission denied).
     """
     adb.shell("mkdir", "-p", REMOTE_RESULTS + "/" + outputs_dir)
+    # The DIR itself must be world-writable: the app creates PNGs inside it,
+    # and a shell-owned 770 dir makes every savePng throw (silently masked
+    # as success by the run schema). Files stay 666 for adb pull.
+    adb.shell("chmod", "777", REMOTE_RESULTS + "/" + outputs_dir)
     paths = [REMOTE_RESULTS + "/" + outputs_dir + "/" + name for name in image_names]
     adb.shell("rm", "-f", *paths)
     adb.shell("touch", *paths)
