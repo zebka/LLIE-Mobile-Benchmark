@@ -1,0 +1,50 @@
+{
+  "model_id": "sci-medium",
+  "artifact_sha256": "006ae2e76b5a795dbf31d546eda90e4e6ff571035dc0a65aba206ea34b679716",
+  "device": {
+    "model": "A142",
+    "android_release": "16",
+    "android_sdk": 36,
+    "build_fingerprint": "Nothing\/Pacman\/Pacman:16\/BP2A.250605.031.A3\/2608130941:user\/release-keys",
+    "soc": "MT6886"
+  },
+  "runtime": {
+    "name": "onnxruntime",
+    "version": "1.19.2"
+  },
+  "backend": "cpu",
+  "precision": "float32",
+  "image_ids": [
+    "1.png"
+  ],
+  "warmup_count": 5,
+  "load_time_ns": 79097846,
+  "images": [
+    {
+      "image_id": "1.png",
+      "model_ns": [
+        23130846,
+        21534539,
+        23008538
+      ],
+      "e2e_ns": [
+        23139307,
+        21538538,
+        23012308
+      ]
+    }
+  ],
+  "pss": {
+    "samples_mb": [
+      42.7353515625,
+      117.6123046875
+    ],
+    "peak_mb": 117.6123046875
+  },
+  "thermal": {
+    "before": "none",
+    "after": "none"
+  },
+  "output_paths": [],
+  "success": true
+}

@@ -66,6 +66,10 @@ class BenchmarkExecutor(
 
             val imagesDir = File(base, "images/$imageSet")
             val imageFiles = resolveImageFiles(imagesDir, imageNames)
+            android.util.Log.d(
+                "LLIEBench",
+                "run model=$modelId backend=$backend set=$imageSet names=${imageNames?.size} files=${imageFiles.size} first=${imageFiles.firstOrNull()?.name}",
+            )
             if (imageFiles.isEmpty()) throw IllegalStateException("no images in $imageSet")
 
             for (file in imageFiles) {
@@ -102,6 +106,11 @@ class BenchmarkExecutor(
                 bitmap.recycle()
                 runner.warmup(manifest, rgb)
                 val measured = runner.measure(file.name, rgb)
+                android.util.Log.d(
+                    "LLIEBench",
+                    "measured ${file.name} success=${measured.success} " +
+                        "samples=${measured.modelNs.size} outputNull=${measured.output == null}",
+                )
                 results.add(measured)
                 if (measured.success) {
                     measured.output?.let { out ->
