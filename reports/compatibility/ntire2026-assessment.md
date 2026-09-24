@@ -52,10 +52,17 @@ but the survey's Pareto figure should use measured counts.
   ORT CPU parity **1.13e-06 ≤ 1e-3 — PASS**. Ready for a phone run.
 - CVPR TCD: **blocked**. Legacy `torch.onnx.export` fails in the
   FFT PhaseTrans block with `RuntimeError: Unknown number type:
-  complex`. The torch.export-based path needs `onnxscript`, which is
-  not installed in this environment (no new packages were added).
-  Unblocks: install onnxscript and retry dynamo export, or replace the
-  FFT phase transfer with an export-safe equivalent and re-verify parity.
+  complex`. The torch.export-based path (with onnxscript 0.7.2
+  installed for the attempt) gets further — graph capture and
+  decomposition succeed — then fails translating `aten.exp` on
+  complex input ("No decompositions registered for the complex-valued
+  input"). Verified that torch's legacy exporter has no FFT symbolic
+  support at all (only a changelog mention of the DFT op), so there is
+  no flag-level workaround. Reimplementing the FFT with real-valued
+  matmuls was rejected: it would pass parity but falsify the latency
+  numbers, which defeats the benchmark. A faithful path would need
+  custom FFT symbolics plus a DFT kernel in the mobile ORT build —
+  recorded as follow-up work, not attempted here.
 
 ## Rank-table note
 
