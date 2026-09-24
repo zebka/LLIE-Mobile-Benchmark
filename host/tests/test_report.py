@@ -84,6 +84,20 @@ def test_result_schema_accepts_valid_result():
     validate(instance=VALID_RESULT, schema=load_schema(RESULT_SCHEMA))
 
 
+@pytest.mark.parametrize("backend", ["cpu", "gpu", "npu", "nnapi", "xnnpack"])
+def test_result_schema_accepts_each_backend(backend):
+    payload = copy.deepcopy(VALID_RESULT)
+    payload["backend"] = backend
+    validate(instance=payload, schema=load_schema(RESULT_SCHEMA))
+
+
+def test_result_schema_rejects_unknown_backend():
+    payload = copy.deepcopy(VALID_RESULT)
+    payload["backend"] = "tpu"
+    with pytest.raises(ValidationError):
+        validate(instance=payload, schema=load_schema(RESULT_SCHEMA))
+
+
 def test_result_rejects_missing_images():
     payload = copy.deepcopy(VALID_RESULT)
     del payload["images"]

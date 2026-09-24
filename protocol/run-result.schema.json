@@ -42,7 +42,7 @@
       },
       "additionalProperties": false
     },
-    "backend": { "enum": ["cpu", "gpu", "npu"] },
+    "backend": { "enum": ["cpu", "gpu", "npu", "nnapi", "xnnpack"] },
     "precision": { "enum": ["float32", "float16", "int8"] },
     "image_ids": {
       "type": "array",

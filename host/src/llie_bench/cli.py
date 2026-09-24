@@ -58,8 +58,10 @@ def _push(args: argparse.Namespace, runner: Runner | None) -> int:
 
 def _run(args: argparse.Namespace, runner: Runner | None) -> int:
     # Exactly one batch command; no per-image timing crosses ADB.
-    _adb(runner, args.serial).start_benchmark(model_id=args.model, image_set=args.image_set)
-    print(f"started on-device batch run for {args.model}")
+    _adb(runner, args.serial).start_benchmark(
+        model_id=args.model, image_set=args.image_set, backend=args.backend
+    )
+    print(f"started on-device batch run for {args.model} backend={args.backend}")
     return 0
 
 
@@ -102,6 +104,12 @@ def build_parser() -> argparse.ArgumentParser:
     p_run = sub.add_parser("run", help="start one on-device batch run (single ADB command)")
     p_run.add_argument("--model", required=True)
     p_run.add_argument("--image-set", default="eval15")
+    p_run.add_argument(
+        "--backend",
+        default="cpu",
+        choices=["cpu", "gpu", "npu", "nnapi", "xnnpack"],
+        help="execution provider label written into the result JSON",
+    )
     p_run.add_argument("--serial", default=None)
 
     p_collect = sub.add_parser("collect", help="pull run results back from the device")

@@ -169,6 +169,30 @@ def test_run_sends_nothing_per_image(runner):
     assert len(runner.calls) == 1
 
 
+def test_run_passes_backend_extra(runner):
+    from llie_bench.cli import main
+
+    runner.calls.clear()
+    code = main(
+        ["run", "--model", "zero-dce", "--backend", "nnapi"], runner=runner
+    )
+    assert code == 0
+    assert len(runner.calls) == 1
+    assert "nnapi" in runner.calls[0]
+    # backend is sent as its own --es pair
+    idx = runner.calls[0].index("backend")
+    assert runner.calls[0][idx + 1] == "nnapi"
+
+
+def test_run_defaults_to_cpu_backend(runner):
+    from llie_bench.cli import main
+
+    runner.calls.clear()
+    code = main(["run", "--model", "zero-dce"], runner=runner)
+    assert code == 0
+    assert "cpu" in runner.calls[0]
+
+
 def test_profile_requires_all_props(runner):
     from llie_bench.device import DeviceProfile
 

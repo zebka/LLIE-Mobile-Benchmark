@@ -30,8 +30,9 @@ class BenchmarkExecutor(
             ?: return RunOutcome(false, File(context.filesDir, "$modelId-run.json"), "no external files dir")
         val resultsDir = File(base, "results")
         val outputsDir = File(resultsDir, "outputs")
-        val resultFile = File(resultsDir, "$modelId-run.json")
-        val statusFile = File(resultsDir, "$modelId.status")
+        val suffix = if (backend == "cpu") "" else "-$backend"
+        val resultFile = File(resultsDir, "$modelId$suffix-run.json")
+        val statusFile = File(resultsDir, "$modelId$suffix.status")
         statusFile.parentFile?.mkdirs()
         statusFile.writeText("running")
 
@@ -39,7 +40,7 @@ class BenchmarkExecutor(
         val sampler = PssSampler()
         sampler.start()
 
-        val engine = SelectedRuntimeEngine()
+        val engine = SelectedRuntimeEngine(backend)
         val runner = BenchmarkRunner(engine, config, clock)
         val results = mutableListOf<ImageRunResult>()
         val outputPaths = mutableMapOf<String, String>()
@@ -87,7 +88,7 @@ class BenchmarkExecutor(
                 if (measured.success) {
                     measured.output?.let { out ->
                         ImageCodec.savePng(out, File(outputsDir, file.name).absolutePath)
-                        outputPaths[file.name] = "outputs/${file.name}"
+                        outputPaths[file.name] = "$outputsDirName/${file.name}"
                     }
                 }
             }

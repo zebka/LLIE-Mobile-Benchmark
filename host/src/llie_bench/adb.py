@@ -123,7 +123,9 @@ class Adb:
     def pull(self, remote: str, local: str | Path) -> None:
         self._run("pull", remote, str(local))
 
-    def start_benchmark(self, model_id: str, image_set: str = "eval15") -> None:
+    def start_benchmark(
+        self, model_id: str, image_set: str = "eval15", backend: str = "cpu"
+    ) -> None:
         """Kick off one on-device batch run; timing happens on the phone."""
         self._run(
             "shell",
@@ -139,4 +141,7 @@ class Adb:
             "--es",
             "image_set",
             image_set,
+            "--es",
+            "backend",
+            backend,
         )

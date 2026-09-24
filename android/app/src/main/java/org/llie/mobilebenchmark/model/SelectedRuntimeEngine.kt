@@ -9,24 +9,33 @@ import java.util.Collections
 
 /**
  * The single runtime adapter selected by the Task 3 compatibility gate
- * (ONNX Runtime, CPU execution provider). Do not add a second unverified
- * runtime adapter in Phase 1.
+ * (ONNX Runtime). The backend selects the execution provider: cpu
+ * (CPUExecutionProvider), nnapi (NNAPI EP), xnnpack (XNNPACK EP), or the
+ * schema labels gpu/npu which on this ORT build are only reachable via NNAPI.
+ * Do not add a second unverified runtime adapter in Phase 1.
  */
-class SelectedRuntimeEngine : ModelEngine {
+class SelectedRuntimeEngine(private val backend: String = "cpu") : ModelEngine {
 
     private var env: OrtEnvironment? = null
     private var session: OrtSession? = null
+    private var options: OrtSession.SessionOptions? = null
     private var manifest: ModelManifest? = null
 
     override fun load(modelFile: File, manifest: ModelManifest) {
         close()
         val environment = OrtEnvironment.getEnvironment()
-        val options = OrtSession.SessionOptions().apply {
-            addCPU(true)
+        val sessionOptions = OrtSession.SessionOptions().apply {
+            when (backend) {
+                "cpu" -> addCPU(true)
+                "nnapi", "gpu", "npu" -> addNnapi()
+                "xnnpack" -> addXnnpack(emptyMap())
+                else -> throw IllegalArgumentException("unsupported backend: $backend")
+            }
         }
-        val newSession = environment.createSession(modelFile.absolutePath, options)
+        val newSession = environment.createSession(modelFile.absolutePath, sessionOptions)
         env = environment
         session = newSession
+        options = sessionOptions
         this.manifest = manifest
     }
 
@@ -81,6 +90,8 @@ class SelectedRuntimeEngine : ModelEngine {
     override fun close() {
         session?.close()
         session = null
+        options?.close()
+        options = null
         env = null
         manifest = null
     }
