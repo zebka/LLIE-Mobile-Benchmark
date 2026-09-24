@@ -32,16 +32,22 @@
 
 ## ابزار میزبان (`host/`)
 
+راهنمای گام‌به‌گام اجرا: [`QUICKSTART.md`](QUICKSTART.md) (۴ دستور: doctor/install،
+setup، ماتریس، گزارش). خلاصه:
+
 ```bash
 cd host
-pip install -e ".[test]"
-llie-bench doctor                 # بررسی ADB و چاپ نمایه‌ی دستگاه (بدون شماره‌ی سریال)
-llie-bench install app-debug.apk  # نصب APK
-llie-bench push models/zero-dce.onnx /sdcard/models/zero-dce.onnx
-llie-bench run --model zero-dce   # یک فرمان batch تکی؛ زمان‌سنجی فقط روی گوشی
-llie-bench collect /sdcard/Android/data/.../files/results results/
-python -m pytest -q               # تست‌های شبیه‌سازی‌شده‌ی ADB
+pip install -e ".[test]"      # و برای سنجه‌های کیفیت: pip install -e ".[metrics]"
+llie-bench doctor             # بررسی ADB (بدون چاپ سریال)
+llie-bench install app-debug.apk
+llie-bench setup --compat-dir ../reports/compatibility --images-dir ../04_datasets/paired/eval15/low
+llie-bench matrix --out ../reports/my-study     # همه‌ی مدل × backend، ترتیبی
+llie-bench report --results-dir ../reports/my-study --ref-dir ../04_datasets/paired/eval15/high
+python -m pytest -q ../tools/compatibility   # تست‌ها (host + سازگاری)، بدون گوشی
 ```
+
+دستورهای سطح پایین (`run`/`collect`/`push`/`metrics`) برای موارد خاص باقی‌اند؛
+برای اجرای عادی فقط `setup`/`benchmark`/`matrix`/`report` لازم است.
 
 ## وضعیت
 
@@ -60,5 +66,5 @@ python -m pytest -q               # تست‌های شبیه‌سازی‌شده
 
 - خروجیهای PNG دستگاه RGBA هستند؛ متریکها alpha را قبل از مقایسه با مرجع RGB کنار می‌گذارند.
 - layout ورودی مدل NCHW است؛ تبدیل HWC→CHW در `SelectedRuntimeEngine` انجام می‌شود (قبل از اصلاح، اختلاف host/device حدود ۶۰ بود).
-- CPU فقط در فاز اول گزارش شده؛ NNAPI/GPU/NPU آزمایش نشده‌اند.
+- NNAPI/XNNPACK در بخش جداگانه روی همین گوشی اجرا شدند: بدون شتاب مؤثر، خروجی بایت‌به‌بایت برابر CPU (جزئیات: `reports/phase1-accelerators.md`).
 - نتیجه‌ی تک‌دستگاهی است، رتبه‌بندی عمومی نیست.

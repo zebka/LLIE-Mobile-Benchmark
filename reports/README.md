@@ -20,8 +20,9 @@
 ## بازتولید
 
 ```bash
-llie-bench metrics --pred case-study/pred --ref ../../04_datasets/paired/eval15/high \
-    --csv case-study/metrics.csv
+cd ../host
+llie-bench report --results-dir ../reports/phase1-results --ref-dir ../04_datasets/paired/eval15/high
+llie-bench report --results-dir ../reports/phase1-accelerators --ref-dir ../04_datasets/paired/eval15/high
 ```
 
 نکته: LPIPS بار اول وزنهای alex را دانلود میکند؛ تستهای واحد با stub این کار را انجام نمیدهند.

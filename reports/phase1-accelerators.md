@@ -89,5 +89,6 @@ are **byte-identical (SHA-256) to the CPU outputs**.
 
 `phase1-accelerators/<model>-<backend>/{run.json,status.txt,latency.csv,metrics.csv,outputs/*.png}`
 plus `latency.csv`, `latency-summary.csv`, `metrics-summary.json`.
-Regenerate with `host/scripts/analyze_accelerators.py`.
+Regenerate from `host/` with `llie-bench report --results-dir
+../reports/phase1-accelerators --ref-dir ../04_datasets/paired/eval15/high`.
 Host tests: 47 passed (`host/tests`, `tools/compatibility`).
