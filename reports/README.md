@@ -10,6 +10,8 @@
 - `phase1-results/` — خروجی خام فاز اول: برای هر مدل `run.json` معتبرِ schema، `status.txt`، `outputs/*.png` (۱۵ تصویر)، `metrics.csv` و `latency.csv`؛ به‌علاوه‌ی `metrics-summary.json` و `latency.csv` تجمیعی.
 - `phase1-accelerators.md` — گزارش بخش جداگانه‌ی شتاب‌دهنده‌ها (NNAPI/XNNPACK روی Nothing Phone 2a): بدون شتاب مؤثر، خروجی بایت‌به‌بایت برابر CPU.
 - `phase1-accelerators/` — خروجی خام شتاب‌دهنده‌ها: برای هر ترکیب مدل×backend (`<model>-<backend>/`) شامل `run.json`، `status.txt`، `outputs/*.png` (۱۵ تصویر)، `metrics.csv` و `latency.csv`؛ به‌علاوه‌ی `latency.csv`، `latency-summary.csv` و `metrics-summary.json` تجمیعی.
+- `phase1-ntire2026-mobileie.md` — گزارش مطالعه‌ی روی‌گوشی مدل MobileIE-6Ch از چالش NTIRE 2026 (هر سه backend؛ بهترین نقطه‌ی کیفیت‌به‌هزینه‌ی اندازه‌گیری‌شده).
+- `phase1-ntire2026-mobileie/` — خروجی خام همان مطالعه با همان قرارداد `phase1-accelerators/`.
 
 ## قرارداد داده
 
