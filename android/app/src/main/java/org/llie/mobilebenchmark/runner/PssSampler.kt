@@ -41,13 +41,16 @@ class PssSampler(private val intervalMs: Long = 500) {
 
     companion object {
         fun readPssMb(): Double? = try {
+            var pss: Double? = null
             File("/proc/self/smaps_rollup").forEachLine { line ->
-                if (line.startsWith("Pss:")) {
+                if (pss == null && line.startsWith("Pss:")) {
                     val parts = line.trim().split(Regex("\\s+"))
-                    return parts[1].toDouble() / 1024.0
+                    if (parts.size >= 2) {
+                        pss = parts[1].toDouble() / 1024.0
+                    }
                 }
             }
-            null
+            pss
         } catch (e: Throwable) {
             null
         }

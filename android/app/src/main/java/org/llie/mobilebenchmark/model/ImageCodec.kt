@@ -35,8 +35,11 @@ object ImageCodec {
         }
         val bitmap = Bitmap.createBitmap(image.width, image.height, Bitmap.Config.ARGB_8888)
         bitmap.setPixels(pixels, 0, image.width, 0, 0, image.width, image.height)
-        java.io.File(path).parentFile?.mkdirs()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, java.io.File(path))
+        val file = java.io.File(path)
+        file.parentFile?.mkdirs()
+        file.outputStream().use { stream ->
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        }
         bitmap.recycle()
     }
 }
