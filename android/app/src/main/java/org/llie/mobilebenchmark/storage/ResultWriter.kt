@@ -24,13 +24,19 @@ object ResultWriter {
         loadTimeNs: Long,
         results: List<ImageRunResult>,
         outputPaths: Map<String, String>,
+        pssSamplesMb: List<Double>,
+        thermalBefore: String,
+        thermalAfter: String,
+        runFailureReason: String = "",
     ): JSONObject {
         val images = JSONArray()
         val imageIds = JSONArray()
         val paths = JSONArray()
         for (r in results) {
             imageIds.put(r.imageId)
-            paths.put(outputPaths[r.imageId] ?: "")
+            if (r.success) {
+                outputPaths[r.imageId]?.let { paths.put(it) }
+            }
             images.put(
                 JSONObject()
                     .put("image_id", r.imageId)
@@ -38,8 +44,10 @@ object ResultWriter {
                     .put("e2e_ns", JSONArray(r.e2eNs))
             )
         }
+        val firstFailedReason = results.firstOrNull { !it.success }?.failureReason ?: ""
         val success = results.isNotEmpty() && results.all { it.success }
-        val failureReason = results.firstOrNull { !it.success }?.failureReason ?: ""
+        val failureReason = firstFailedReason.ifEmpty { runFailureReason }.ifEmpty { "run failed" }
+        val peakMb = pssSamplesMb.maxOrNull() ?: 0.0
 
         return JSONObject()
             .put("model_id", modelId)
@@ -60,8 +68,16 @@ object ResultWriter {
             .put("warmup_count", warmupCount)
             .put("load_time_ns", loadTimeNs)
             .put("images", images)
-            .put("pss", JSONObject().put("samples_mb", JSONArray()).put("peak_mb", 0.0))
-            .put("thermal", JSONObject().put("before", "unrecorded").put("after", "unrecorded"))
+            .put(
+                "pss",
+                JSONObject()
+                    .put("samples_mb", JSONArray(pssSamplesMb))
+                    .put("peak_mb", peakMb)
+            )
+            .put(
+                "thermal",
+                JSONObject().put("before", thermalBefore).put("after", thermalAfter)
+            )
             .put("output_paths", paths)
             .put("success", success)
             .apply { if (!success) put("failure_reason", failureReason) }
