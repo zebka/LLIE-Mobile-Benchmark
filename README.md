@@ -47,13 +47,18 @@ python -m pytest -q               # تست‌های شبیه‌سازی‌شده
 
 خلاصه‌ی فاز اول در `PHASE_1.md`، طرح فنیِ تأییدشده در `design.md` و برنامه‌ی اجرایی جزئی در `docs/superpowers/plans/2026-09-24-mobile-llie-phase1.md` ثبت شده‌اند.
 
-انجام‌شده:
-- Task 2: قراردادهای `protocol/*.schema.json` و ماژول `host/src/llie_bench/report.py` (۱۲ تست سبز).
-- Task 3: گذرِ سازگاری ONNX برای هر دو مدل (zero-dce و SCI-medium) با parity زیر `1e-3`؛ تصمیم موقت runtime: ONNX Runtime (`reports/runtime-decision.md`)، تأیید نهایی منوط به تست دستگاه.
-- Task 4: اسکلت پروژه‌ی اندروید (`android/`، ONNX Runtime EP، زمان‌سنج درون‌برنامه‌ای با `SystemClock.elapsedRealtimeNanos`، تست‌های واحد) و جریان CI (`.github/workflows/android-ci.yml`) که تست‌ها را اجرا و APK را به‌صورت artifact آپلود می‌کند.
-- Task 5: کنترل‌گر ADB میزبان (`adb.py`، `device.py`، `cli.py`؛ ۱۴ تست با runner جعلی سبز).
+**فاز اول انجام شد (۲۰۲۶-۰۹-۲۴):**
 
-باقی‌مانده:
-- تأیید سبز شدن CI و دریافت APK از artifact.
-- Task 6: سنجه‌های کیفیت میزبان و تولید گزارش.
-- Task 7: مطالعه‌ی روی گوشی واقعی — نیازمند اتصال Nothing Phone (2a) با USB debugging؛ ADB هنوز در این محیط نصب نیست.
+- Task 2: قراردادهای `protocol/*.schema.json` و ماژول `host/src/llie_bench/report.py` (۱۲ تست سبز).
+- Task 3: گذرِ سازگاری ONNX برای هر دو مدل (zero-dce و SCI-medium) با parity زیر `1e-3`؛ runtime نهایی: ONNX Runtime 1.19.2 / CPU (`reports/runtime-decision.md`، تأییدشده روی گوشی).
+- Task 4: اسکلت پروژه‌ی اندروید، زمان‌سنج درون‌برنامه‌ای، CI سبز، APK نصب‌شده روی Nothing Phone (2a).
+- Task 5: کنترل‌گر ADB میزبان (۱۴ تست سبز؛ بدون افشای سریال).
+- Task 6: سنجه‌های کیفیت میزبان (PSNR/SSIM/LPIPS، RGBA→RGB، ردِ عدم تطابق ابعاد؛ ۳۹ تست سبز در مجموع host+compatibility).
+- Task 7: مطالعه‌ی روی گوشی واقعی — هر دو مدل با `success=true` و schema معتبر اجرا شدند؛ خروجیها، `run.json`، `metrics.csv` و `latency.csv` در `reports/phase1-results/`؛ گزارش در `reports/phase1-nothing-phone-2a.md`.
+
+نکته‌های اجرایی:
+
+- خروجیهای PNG دستگاه RGBA هستند؛ متریکها alpha را قبل از مقایسه با مرجع RGB کنار می‌گذارند.
+- layout ورودی مدل NCHW است؛ تبدیل HWC→CHW در `SelectedRuntimeEngine` انجام می‌شود (قبل از اصلاح، اختلاف host/device حدود ۶۰ بود).
+- CPU فقط در فاز اول گزارش شده؛ NNAPI/GPU/NPU آزمایش نشده‌اند.
+- نتیجه‌ی تک‌دستگاهی است، رتبه‌بندی عمومی نیست.

@@ -5,8 +5,9 @@
 ## ساختار
 
 - `compatibility/` — نتیجه‌ی گذرِ سازگاری Task 3: خروجی ONNX هر مدل (`*.onnx`) و `export-summary.json` (parity host در برابر checkpoint اصلی). معیار پذیرش: اختلاف `≤ 1e-3`.
-- `runtime-decision.md` — تصمیم runtime با شواهد و چک‌لیست تأیید دستگاه. انتخاب فعلی: ONNX Runtime (موقت، تا تست روی گوشی).
-- `case-study/` — خروجی مطالعه‌ی فاز اول روی Nothing Phone (2a): فایل `run-result.json` معتبرِ schema به‌ازای هر مدل/تصویر، خروجیهای افزایش‌یافته، و `metrics.csv`.
+- `runtime-decision.md` — تصمیم runtime با شواهد و چک‌لیست تأیید دستگاه. انتخاب فعلی: ONNX Runtime (تأییدشده روی Nothing Phone 2a).
+- `phase1-nothing-phone-2a.md` — گزارش مطالعه‌ی موردی فاز اول: پروفایل دستگاه، زمان/حافظه/کیفیت هر مدل، محدودیت‌ها.
+- `phase1-results/` — خروجی خام فاز اول: برای هر مدل `run.json` معتبرِ schema، `status.txt`، `outputs/*.png` (۱۵ تصویر)، `metrics.csv` و `latency.csv`؛ به‌علاوه‌ی `metrics-summary.json` و `latency.csv` تجمیعی.
 
 ## قرارداد داده
 
