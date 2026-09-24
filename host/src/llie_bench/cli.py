@@ -70,6 +70,19 @@ def _collect(args: argparse.Namespace, runner: Runner | None) -> int:
     return 0
 
 
+def _metrics(args: argparse.Namespace, runner: Runner | None) -> int:
+    import json
+
+    from .metrics import aggregate, evaluate_folders, write_metrics_csv
+
+    rows = evaluate_folders(args.pred, args.ref)
+    if args.csv:
+        write_metrics_csv(args.csv, rows)
+        print(f"wrote {args.csv}")
+    print(json.dumps({"images": len(rows), "aggregate": aggregate(rows)}, indent=2, sort_keys=True))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="llie-bench", description="LLIE mobile benchmark host controller")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -95,6 +108,11 @@ def build_parser() -> argparse.ArgumentParser:
     p_collect.add_argument("remote")
     p_collect.add_argument("local")
     p_collect.add_argument("--serial", default=None)
+
+    p_metrics = sub.add_parser("metrics", help="PSNR/SSIM/LPIPS for pulled outputs (host-side)")
+    p_metrics.add_argument("--pred", required=True, help="directory of enhanced images")
+    p_metrics.add_argument("--ref", required=True, help="directory of ground-truth images")
+    p_metrics.add_argument("--csv", default=None, help="output CSV path (one row per image)")
     return parser
 
 
@@ -106,6 +124,7 @@ def main(argv: list[str] | None = None, *, runner: Runner | None = None) -> int:
         "push": _push,
         "run": _run,
         "collect": _collect,
+        "metrics": _metrics,
     }
     try:
         return handlers[args.command](args, runner)
