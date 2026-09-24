@@ -96,7 +96,11 @@ def setup_device(
     for png in pngs:
         adb.push(png, REMOTE_IMAGES + "/" + image_set + "/" + png.name)
     adb.shell("mkdir", "-p", REMOTE_RESULTS)
-    adb.shell("chmod", "777", REMOTE_RESULTS)
+    # adb push creates shell-owned dirs without other-execute, which the app
+    # cannot traverse (it then reports "manifest missing"). All staged dirs
+    # are shell-owned, so plain chmod (no -R, no app-owned files) is safe.
+    adb.shell("chmod", "777", REMOTE_MODELS, REMOTE_MANIFESTS, REMOTE_IMAGES, REMOTE_RESULTS)
+    adb.shell("chmod", "777", REMOTE_IMAGES + "/" + image_set)
     return {"models": pushed_models, "images": len(pngs)}
 
 
@@ -181,6 +185,10 @@ def run_combo(
 
     adb.shell("am", "force-stop", PACKAGE)
     adb.shell("rm", "-f", result_remote, status_remote)
+    # Re-create shell-owned placeholders: the app overwrites them in place,
+    # so run.json/status stay readable by shell (else polling loops forever).
+    adb.shell("touch", result_remote, status_remote)
+    adb.shell("chmod", "666", result_remote, status_remote)
     for outputs_dir in candidate_outputs_dirs(model_id, backend):
         prime_outputs(adb, outputs_dir, names)
     adb.start_benchmark(model_id=model_id, image_set=image_set, backend=backend)

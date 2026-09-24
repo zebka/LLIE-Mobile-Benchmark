@@ -28,7 +28,7 @@ llie-bench install /path/to/app-debug.apk
 ## 3. Stage the phone (models + images, one command)
 
 ```bash
-llie-bench setup --compat-dir ../reports/compatibility --images-dir ../04_datasets/paired/eval15/low
+llie-bench setup --compat-dir ../reports/compatibility --images-dir ../../04_datasets/paired/eval15/low
 ```
 
 Expected output: `setup done: 2 models, 15 images (set eval15)`
@@ -48,7 +48,7 @@ llie-bench matrix --out ../reports/my-study
 ## 5. Build the report
 
 ```bash
-llie-bench report --results-dir ../reports/my-study --ref-dir ../04_datasets/paired/eval15/high
+llie-bench report --results-dir ../reports/my-study --ref-dir ../../04_datasets/paired/eval15/high
 ```
 
 Produces: `latency.csv`, `latency-summary.csv`, per-combo `metrics.csv`,

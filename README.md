@@ -48,9 +48,9 @@ cd host
 pip install -e ".[test]"      # and for quality metrics: pip install -e ".[metrics]"
 llie-bench doctor             # check ADB (never prints the serial)
 llie-bench install app-debug.apk
-llie-bench setup --compat-dir ../reports/compatibility --images-dir ../04_datasets/paired/eval15/low
+llie-bench setup --compat-dir ../reports/compatibility --images-dir ../../04_datasets/paired/eval15/low
 llie-bench matrix --out ../reports/my-study     # every model x backend, sequential
-llie-bench report --results-dir ../reports/my-study --ref-dir ../04_datasets/paired/eval15/high
+llie-bench report --results-dir ../reports/my-study --ref-dir ../../04_datasets/paired/eval15/high
 python -m pytest -q ../tools/compatibility   # tests (host + compatibility), no phone needed
 ```
 

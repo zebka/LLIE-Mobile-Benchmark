@@ -241,6 +241,35 @@ def test_setup_device_pushes_everything(tmp_path):
     assert len(pushes) == 2 + 2 + 2  # models + manifests + images
 
 
+def test_setup_device_makes_staged_dirs_traversable(tmp_path):
+    """The app must traverse models/manifests/images dirs.
+
+    adb push creates them shell-owned without other-execute, so the app
+    sees "manifest missing" unless setup chmods them world-traversable.
+    """
+    from llie_bench.flow import REMOTE_IMAGES, REMOTE_MANIFESTS, REMOTE_MODELS, REMOTE_RESULTS, setup_device
+
+    compat = tmp_path / "compat"
+    compat.mkdir()
+    for model_id in ("zero-dce", "sci-medium"):
+        (compat / (model_id + ".onnx")).write_bytes(b"onnx")
+        (compat / (model_id + ".manifest.json")).write_text("{}", encoding="utf-8")
+    images = tmp_path / "images"
+    images.mkdir()
+    from PIL import Image
+
+    Image.new("RGB", (4, 4)).save(images / "1.png")
+
+    runner = FakeRunner()
+    adb = Adb(runner=runner, serial=SERIAL)
+    setup_device(adb, compat_dir=compat, images_dir=images)
+    chmods = [c for c in runner.calls if "chmod" in c]
+    flattened = " ".join(" ".join(c) for c in chmods)
+    for path in (REMOTE_MODELS, REMOTE_MANIFESTS, REMOTE_IMAGES, REMOTE_RESULTS):
+        assert path in flattened
+    assert "777" in flattened
+
+
 def test_setup_device_rejects_missing_artifact(tmp_path):
     from llie_bench.flow import setup_device
 
@@ -271,6 +300,32 @@ def test_run_combo_end_to_end(tmp_path):
     starts = [c for c in runner.calls if "am" in c and "start" in c]
     assert len(starts) == 1
     assert any("force-stop" in c for c in runner.calls)
+
+
+def test_run_combo_recreates_shell_owned_result_placeholders(tmp_path):
+    """run.json/status must stay shell-readable: rm, then touch+chmod 666.
+
+    Otherwise the app recreates them app-owned, shell cannot read the
+    status, and polling loops until timeout.
+    """
+    from llie_bench.flow import REMOTE_RESULTS, result_name, run_combo, status_name
+
+    runner = MaterializingRunner()
+    adb = Adb(runner=runner, serial=SERIAL)
+    run_combo(
+        adb,
+        model_id="zero-dce",
+        backend="cpu",
+        out_dir=tmp_path / "zero-dce",
+        poll_interval=0,
+        sleep=lambda s: None,
+    )
+    result_remote = REMOTE_RESULTS + "/" + result_name("zero-dce", "cpu")
+    status_remote = REMOTE_RESULTS + "/" + status_name("zero-dce", "cpu")
+    touches = [c for c in runner.calls if "touch" in c]
+    chmods = [c for c in runner.calls if "chmod" in c]
+    assert any(result_remote in c and status_remote in c for c in touches)
+    assert any(result_remote in c and status_remote in c and "666" in c for c in chmods)
 
 
 def test_run_combo_rejects_failed_run(tmp_path):
