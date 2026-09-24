@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LLIE mobile benchmark model manifest",
+  "type": "object",
+  "required": [
+    "model_id",
+    "artifact",
+    "input",
+    "output",
+    "precision",
+    "preprocessing",
+    "channel_order",
+    "input_range",
+    "tensor_layout",
+    "output_range"
+  ],
+  "properties": {
+    "model_id": { "type": "string", "minLength": 1 },
+    "artifact": { "type": "string", "minLength": 1 },
+    "input": { "$ref": "#/definitions/imageSize" },
+    "output": { "$ref": "#/definitions/imageSize" },
+    "precision": { "enum": ["float32", "float16", "int8"] },
+    "preprocessing": { "type": "object", "minProperties": 1 },
+    "channel_order": { "const": "RGB" },
+    "input_range": { "$ref": "#/definitions/valueRange" },
+    "tensor_layout": { "enum": ["NCHW", "NHWC"] },
+    "output_range": { "$ref": "#/definitions/valueRange" },
+    "tiling": {
+      "type": "object",
+      "required": ["tile_width", "tile_height", "overlap"],
+      "properties": {
+        "tile_width": { "type": "integer", "minimum": 1 },
+        "tile_height": { "type": "integer", "minimum": 1 },
+        "overlap": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": true,
+  "definitions": {
+    "imageSize": {
+      "type": "object",
+      "required": ["width", "height"],
+      "properties": {
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "valueRange": {
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 2,
+      "maxItems": 2
+    }
+  }
+}

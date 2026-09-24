@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "llie-bench"
+version = "0.1.0"
+description = "Host controller and reporting tools for the LLIE mobile deployment benchmark"
+requires-python = ">=3.11"
+dependencies = ["jsonschema==4.26.0"]
+
+[project.optional-dependencies]
+test = ["pytest==9.1.1"]
+metrics = [
+    "torch==2.11.0",
+    "opencv-python==5.0.0.93",
+    "numpy==2.5.2",
+    "scikit-image==0.26.0",
+    "Pillow==12.3.0",
+    "lpips==0.1.4",
+]
+
+[project.scripts]
+llie-bench = "llie_bench.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

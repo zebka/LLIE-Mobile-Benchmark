@@ -1,0 +1,109 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LLIE mobile benchmark run result",
+  "type": "object",
+  "required": [
+    "model_id",
+    "artifact_sha256",
+    "device",
+    "runtime",
+    "backend",
+    "precision",
+    "image_ids",
+    "warmup_count",
+    "load_time_ns",
+    "images",
+    "pss",
+    "thermal",
+    "output_paths",
+    "success"
+  ],
+  "properties": {
+    "model_id": { "type": "string", "minLength": 1 },
+    "artifact_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "device": {
+      "type": "object",
+      "required": ["model", "android_release", "android_sdk", "build_fingerprint"],
+      "properties": {
+        "model": { "type": "string", "minLength": 1 },
+        "android_release": { "type": "string", "minLength": 1 },
+        "android_sdk": { "type": "integer", "minimum": 1 },
+        "build_fingerprint": { "type": "string", "minLength": 1 },
+        "soc": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "runtime": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "backend": { "enum": ["cpu", "gpu", "npu"] },
+    "precision": { "enum": ["float32", "float16", "int8"] },
+    "image_ids": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "warmup_count": { "type": "integer", "minimum": 0 },
+    "load_time_ns": { "type": "integer", "minimum": 0 },
+    "images": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["image_id", "model_ns", "e2e_ns"],
+        "properties": {
+          "image_id": { "type": "string", "minLength": 1 },
+          "model_ns": {
+            "type": "array",
+            "items": { "type": "integer", "minimum": 0 },
+            "minItems": 1
+          },
+          "e2e_ns": {
+            "type": "array",
+            "items": { "type": "integer", "minimum": 0 },
+            "minItems": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "pss": {
+      "type": "object",
+      "required": ["samples_mb", "peak_mb"],
+      "properties": {
+        "samples_mb": {
+          "type": "array",
+          "items": { "type": "number", "minimum": 0 }
+        },
+        "peak_mb": { "type": "number", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "thermal": {
+      "type": "object",
+      "required": ["before", "after"],
+      "properties": {
+        "before": { "type": "string", "minLength": 1 },
+        "after": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "output_paths": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "success": { "type": "boolean" },
+    "failure_reason": { "type": "string", "minLength": 1 }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "success": { "const": false } } },
+      "then": { "required": ["failure_reason"] }
+    }
+  ],
+  "additionalProperties": false
+}
