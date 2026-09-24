@@ -39,8 +39,25 @@ class SelectedRuntimeEngine : ModelEngine {
             "input ${input.width}x${input.height} does not match manifest ${m.inputWidth}x${m.inputHeight}"
         }
 
-        val shape = longArrayOf(1, 3, m.inputHeight.toLong(), m.inputWidth.toLong())
-        OnnxTensor.createTensor(environment, FloatBuffer.wrap(input.data), shape).use { tensor ->
+        val h = m.inputHeight
+        val w = m.inputWidth
+        // RgbImage holds interleaved RGB (HWC); the graph expects NCHW.
+        val chw = FloatArray(3 * h * w)
+        var src = 0
+        for (y in 0 until h) {
+            for (x in 0 until w) {
+                val r = input.data[src]
+                val g = input.data[src + 1]
+                val b = input.data[src + 2]
+                src += 3
+                val plane = y * w + x
+                chw[plane] = r
+                chw[h * w + plane] = g
+                chw[2 * h * w + plane] = b
+            }
+        }
+        val shape = longArrayOf(1, 3, h.toLong(), w.toLong())
+        OnnxTensor.createTensor(environment, FloatBuffer.wrap(chw), shape).use { tensor ->
             session.run(Collections.singletonMap("input", tensor)).use { results ->
                 @Suppress("UNCHECKED_CAST")
                 val output = results.get(0).value as Array<Array<Array<FloatArray>>>

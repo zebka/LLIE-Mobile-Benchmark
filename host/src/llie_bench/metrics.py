@@ -93,6 +93,10 @@ def evaluate_pair(
             f"shape mismatch: {pred.shape[:2]} vs {ref.shape[:2]} "
             f"({Path(pred_path).name} vs {Path(ref_path).name}); refusing to resize"
         )
+    if pred.ndim == 3 and ref.ndim == 3 and pred.shape[2] == 4 and ref.shape[2] == 3:
+        pred = pred[:, :, :3]
+    elif pred.ndim == 3 and ref.ndim == 3 and pred.shape[2] == 3 and ref.shape[2] == 4:
+        ref = ref[:, :, :3]
     if pred.shape[2:] != ref.shape[2:] or pred.ndim != ref.ndim:
         raise ValueError(
             f"channel mismatch: {pred.shape} vs {ref.shape} "

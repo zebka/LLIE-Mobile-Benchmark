@@ -44,8 +44,19 @@ def test_metrics_reject_different_shapes(tmp_path):
         evaluate_pair(tmp_path / "pred.png", tmp_path / "ref.png", lpips_fn=_stub_lpips())
 
 
+def test_metrics_accepts_rgba_pred_vs_rgb_ref(tmp_path):
+    rng = np.random.default_rng(4)
+    rgb = rng.integers(0, 256, size=(8, 8, 3), dtype=np.uint8)
+    rgba = np.dstack([rgb, np.full((8, 8), 255, dtype=np.uint8)])
+    _save(tmp_path / "pred.png", rgba)
+    _save(tmp_path / "ref.png", rgb)
+    result = evaluate_pair(tmp_path / "pred.png", tmp_path / "ref.png", lpips_fn=_stub_lpips())
+    assert result["psnr"] == float("inf")
+    assert result["ssim"] == pytest.approx(1.0, abs=1e-6)
+
+
 def test_metrics_reject_channel_mismatch(tmp_path):
-    _save(tmp_path / "pred.png", np.zeros((8, 8, 4), dtype=np.uint8))
+    _save(tmp_path / "pred.png", np.zeros((8, 8, 2), dtype=np.uint8))
     _save(tmp_path / "ref.png", np.zeros((8, 8, 3), dtype=np.uint8))
     with pytest.raises(ValueError, match="channel mismatch"):
         evaluate_pair(tmp_path / "pred.png", tmp_path / "ref.png", lpips_fn=_stub_lpips())
