@@ -44,9 +44,14 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from model_wrappers import (  # noqa: E402
+    CHECKPOINT_PROVENANCE,
+    load_lyt_net,
+    load_ruas_lol,
     load_sci_medium,
     load_zero_dce,
     make_parity_input,
+    lyt_reference_output,
+    ruas_reference_output,
     sci_reference_output,
     zero_dce_reference_output,
 )
@@ -173,12 +178,26 @@ def main() -> int:
 
     zero_dce = load_zero_dce()
     sci = load_sci_medium()
+    ruas = load_ruas_lol()
+    lyt = load_lyt_net()
     x = make_parity_input(size=STUDY_INPUT_SIZE)
 
-    for name, model, reference, wrapper in (
+    candidates = (
         ("zero-dce", zero_dce, zero_dce_reference_output(zero_dce, x), _ZeroDCEEnhanced(zero_dce)),
         ("sci-medium", sci, sci_reference_output(sci, x), _SingleOutput(sci, 1)),
-    ):
+        ("ruas-lol", ruas, ruas_reference_output(ruas, x), ruas),
+        ("lyt-net", lyt, lyt_reference_output(lyt, x), lyt),
+    )
+
+    for name, model, reference, wrapper in candidates:
+        summary["candidates"].append(
+            {
+                "candidate": f"{name}:checkpoint-sha256",
+                "status": "recorded",
+                "error": "",
+                "checkpoint_sha256": CHECKPOINT_PROVENANCE[name][1],
+            }
+        )
         onnx_record = try_onnx_export(name, wrapper, x)
         summary["candidates"].append(onnx_record)
         if onnx_record["status"] == "exported":
@@ -197,7 +216,7 @@ def main() -> int:
     if exported:
         summary["selected_runtime"] = {
             "name": "onnxruntime",
-            "basis": f"{len(exported)}/2 models passed host parity at <=1e-3",
+            "basis": f"{len(exported)}/{len(candidates)} models passed host parity at <=1e-3",
         }
     else:
         summary["selected_runtime"] = None

@@ -1,11 +1,17 @@
 {
   "candidates": [
     {
+      "candidate": "zero-dce:checkpoint-sha256",
+      "status": "recorded",
+      "error": "",
+      "checkpoint_sha256": "a4395acb874f320375d9704997cef874eaaaaa26a1777ceb29a92b70f74c3612"
+    },
+    {
       "candidate": "zero-dce:onnx",
       "status": "exported",
       "error": "",
       "artifact": "reports\\compatibility\\zero-dce.onnx",
-      "seconds": 0.65,
+      "seconds": 0.35,
       "artifact_bytes": 324671
     },
     {
@@ -25,14 +31,20 @@
       "status": "failed",
       "error": "LiteRT tooling not installed: No module named 'ai_edge_litert'",
       "artifact": "",
-      "seconds": 0.0003833770751953125
+      "seconds": 0.0004322528839111328
+    },
+    {
+      "candidate": "sci-medium:checkpoint-sha256",
+      "status": "recorded",
+      "error": "",
+      "checkpoint_sha256": "4ff1e7e66e8f18114f790e5085ca4c936f0858e329e7ad1cb65b8aa09a9c6916"
     },
     {
       "candidate": "sci-medium:onnx",
       "status": "exported",
       "error": "",
       "artifact": "reports\\compatibility\\sci-medium.onnx",
-      "seconds": 0.04,
+      "seconds": 0.02,
       "artifact_bytes": 3560
     },
     {
@@ -52,12 +64,78 @@
       "status": "failed",
       "error": "LiteRT tooling not installed: No module named 'ai_edge_litert'",
       "artifact": "",
-      "seconds": 0.0006287097930908203
+      "seconds": 0.0006117820739746094
+    },
+    {
+      "candidate": "ruas-lol:checkpoint-sha256",
+      "status": "recorded",
+      "error": "",
+      "checkpoint_sha256": "f45a881a9b836fff4a3172481f28c9eb4d91bc4df54ec064092f39ce40abcdcd"
+    },
+    {
+      "candidate": "ruas-lol:onnx",
+      "status": "exported",
+      "error": "",
+      "artifact": "reports\\compatibility\\ruas-lol.onnx",
+      "seconds": 0.24,
+      "artifact_bytes": 44969
+    },
+    {
+      "candidate": "ruas-lol:ort-parity",
+      "status": "passed",
+      "error": "",
+      "max_abs_err": 5.960464477539062e-07
+    },
+    {
+      "candidate": "ruas-lol:manifest",
+      "status": "written",
+      "error": "",
+      "artifact": "reports\\compatibility\\ruas-lol.manifest.json"
+    },
+    {
+      "candidate": "ruas-lol:litert",
+      "status": "failed",
+      "error": "LiteRT tooling not installed: No module named 'ai_edge_litert'",
+      "artifact": "",
+      "seconds": 0.0005102157592773438
+    },
+    {
+      "candidate": "lyt-net:checkpoint-sha256",
+      "status": "recorded",
+      "error": "",
+      "checkpoint_sha256": "19c15bbe5e4d961d7c27f26998c90c39ef81759af027ba1aba9f32d6fe98462d"
+    },
+    {
+      "candidate": "lyt-net:onnx",
+      "status": "exported",
+      "error": "",
+      "artifact": "reports\\compatibility\\lyt-net.onnx",
+      "seconds": 0.49,
+      "artifact_bytes": 230030
+    },
+    {
+      "candidate": "lyt-net:ort-parity",
+      "status": "passed",
+      "error": "",
+      "max_abs_err": 0.00046181678771972656
+    },
+    {
+      "candidate": "lyt-net:manifest",
+      "status": "written",
+      "error": "",
+      "artifact": "reports\\compatibility\\lyt-net.manifest.json"
+    },
+    {
+      "candidate": "lyt-net:litert",
+      "status": "failed",
+      "error": "LiteRT tooling not installed: No module named 'ai_edge_litert'",
+      "artifact": "",
+      "seconds": 0.0005819797515869141
     }
   ],
   "selected_runtime": {
     "name": "onnxruntime",
-    "basis": "2/2 models passed host parity at <=1e-3"
+    "basis": "4/4 models passed host parity at <=1e-3"
   },
   "study_input_size": [
     3,
