@@ -125,7 +125,7 @@ class BenchmarkExecutor(
             androidRelease = Build.VERSION.RELEASE ?: "unknown",
             androidSdk = Build.VERSION.SDK_INT,
             buildFingerprint = Build.FINGERPRINT,
-            soc = Build.SOC_MODEL ?: Build.BOARD,
+            soc = socModelOrBoard(),
             runtimeName = "onnxruntime",
             runtimeVersion = ortVersion(),
             backend = backend,
@@ -147,6 +147,20 @@ class BenchmarkExecutor(
 
     companion object {
         /**
+         * Build.SOC_MODEL exists only on API 29+. Reading it via a static
+         * reference on older devices throws NoSuchFieldError before any
+         * fallback can run, so resolve reflectively.
+         */
+        fun socModelOrBoard(): String {
+            if (Build.VERSION.SDK_INT >= 29) {
+                return runCatching { Build.SOC_MODEL }.getOrNull().orEmpty()
+            }
+            return runCatching {
+                val field = Build::class.java.getField("SOC_MODEL")
+                (field.get(null) as? String).orEmpty()
+            }.getOrNull().orEmpty().ifEmpty { Build.BOARD }
+        }
+
          * Resolve the ordered input list. An explicit host-supplied list wins
          * over directory listing, because scoped storage can filter
          * directory listings while direct file opens keep working.
