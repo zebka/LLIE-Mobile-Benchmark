@@ -1,0 +1,4 @@
+model_id,backend,load_ms,model_median_ms,model_p95_ms,e2e_median_ms,pss_peak_mb,success,failure_reason,thermal_before,thermal_after
+mobileie-6ch-1200x800,cpu,275.769167,6632.085935,9110.325205,6632.169424,1121.78515625,True,,none,none
+mobileie-6ch-1800x1200,cpu,424.902239,16601.747182,34892.308112,16601.810254,2326.5654296875,False,"OutOfMemoryError: Failed to allocate a 25920016 byte allocation with 5646048 free bytes and 5513KB until OOM, target footprint 268435456, growth limit 268435456",none,none
+mobileie-6ch-900x600,cpu,475.526406,1481.593489,4288.464529,1481.634426,691.513671875,True,,none,none

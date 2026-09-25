@@ -1,0 +1,6 @@
+model_id,backend,image_id,median_model_ns,p95_model_ns,median_e2e_ns,p95_e2e_ns,success,failure_reason
+mobileie-6ch-1800x1200,cpu,1.png,19429426347.0,34892308112,19429515462.0,34892380455,False,"OutOfMemoryError: Failed to allocate a 25920016 byte allocation with 5646048 free bytes and 5513KB until OOM, target footprint 268435456, growth limit 268435456"
+mobileie-6ch-1800x1200,cpu,22.png,19629238587.0,20219700565,19629325305.0,20219758690,False,"OutOfMemoryError: Failed to allocate a 25920016 byte allocation with 5646048 free bytes and 5513KB until OOM, target footprint 268435456, growth limit 268435456"
+mobileie-6ch-1800x1200,cpu,55.png,16601747182.0,17403257129,16601810254.0,17403300566,False,"OutOfMemoryError: Failed to allocate a 25920016 byte allocation with 5646048 free bytes and 5513KB until OOM, target footprint 268435456, growth limit 268435456"
+mobileie-6ch-1800x1200,cpu,111.png,14715063016.0,17095406347,14715131973.0,17103144733,False,"OutOfMemoryError: Failed to allocate a 25920016 byte allocation with 5646048 free bytes and 5513KB until OOM, target footprint 268435456, growth limit 268435456"
+mobileie-6ch-1800x1200,cpu,79.png,14993104994.0,14993104994,14993196296.0,14993196296,False,"OutOfMemoryError: Failed to allocate a 25920016 byte allocation with 5646048 free bytes and 5513KB until OOM, target footprint 268435456, growth limit 268435456"

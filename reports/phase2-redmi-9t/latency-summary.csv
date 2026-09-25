@@ -1,0 +1,6 @@
+model_id,backend,load_ms,model_median_ms,model_p95_ms,e2e_median_ms,pss_peak_mb,success,failure_reason,thermal_before,thermal_after
+lyt-net,cpu,253.748854,5103.646717,6192.31156,5103.738383,1409.818359375,True,,none,none
+mobileie-6ch,cpu,148.275834,711.833125,1925.75578,711.850885,339.0771484375,True,,none,none
+ruas-lol,cpu,567.471875,208.228646,709.56724,208.24599,192.6083984375,True,,none,none
+sci-medium,cpu,236.493177,62.511458,136.609479,62.528593,162.16015625,True,,none,none
+zero-dce,cpu,119.341146,1416.38125,3823.946509,1416.39802,511.8779296875,True,,none,none
