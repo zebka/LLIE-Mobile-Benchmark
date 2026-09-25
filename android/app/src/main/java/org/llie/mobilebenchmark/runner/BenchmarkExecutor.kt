@@ -161,7 +161,9 @@ class BenchmarkExecutor(
             }.getOrNull().orEmpty().ifEmpty { Build.BOARD }
         }
 
+        /**
          * Resolve the ordered input list. An explicit host-supplied list wins
+
          * over directory listing, because scoped storage can filter
          * directory listings while direct file opens keep working.
          */
