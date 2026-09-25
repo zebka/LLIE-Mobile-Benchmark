@@ -9,3 +9,7 @@ __pycache__/
 *.egg-info/
 .venv/
 .DS_Store
+
+# generated resolution-scaling artifacts (rebuild with tools/resolution_scaling/prep_inputs.py)
+reports/resolution-scaling/inputs/
+reports/resolution-scaling/*/outputs/

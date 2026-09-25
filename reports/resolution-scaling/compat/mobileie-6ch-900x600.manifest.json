@@ -1,0 +1,35 @@
+{
+  "model_id": "mobileie-6ch-900x600",
+  "artifact": "mobileie-6ch-900x600.onnx",
+  "precision": "float32",
+  "input": {
+    "width": 900,
+    "height": 600
+  },
+  "output": {
+    "width": 900,
+    "height": 600
+  },
+  "preprocessing": {
+    "steps": [
+      "rgb",
+      "normalize_0_1",
+      "nchw"
+    ]
+  },
+  "channel_order": "RGB",
+  "input_range": [
+    0.0,
+    1.0
+  ],
+  "tensor_layout": "NCHW",
+  "output_range": [
+    0.0,
+    1.0
+  ],
+  "tiling": {
+    "tile_width": 512,
+    "tile_height": 512,
+    "overlap": 32
+  }
+}
