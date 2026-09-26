@@ -1,0 +1,259 @@
+{
+  "model_id": "mobileie-6ch",
+  "artifact_sha256": "5c3978c66ffe049b280013886e07a9d35cda495180b5031c609d750ce7c0ef9d",
+  "device": {
+    "model": "SM-C5000",
+    "android_release": "8.0.0",
+    "android_sdk": 26,
+    "build_fingerprint": "samsung\/c5ltezh\/c5ltechn:8.0.0\/R16NW\/C5000ZHU1CSA1:user\/release-keys",
+    "soc": "msm8952"
+  },
+  "runtime": {
+    "name": "onnxruntime",
+    "version": "1.19.2"
+  },
+  "backend": "cpu",
+  "precision": "float32",
+  "image_ids": [
+    "1.png",
+    "111.png",
+    "146.png",
+    "179.png",
+    "22.png",
+    "23.png",
+    "493.png",
+    "547.png",
+    "55.png",
+    "665.png",
+    "669.png",
+    "748.png",
+    "778.png",
+    "780.png",
+    "79.png"
+  ],
+  "warmup_count": 5,
+  "load_time_ns": 237931145,
+  "images": [
+    {
+      "image_id": "1.png",
+      "model_ns": [
+        2768747968,
+        2715666196,
+        2787718749
+      ],
+      "e2e_ns": [
+        2768813280,
+        2715723332,
+        2787774374
+      ]
+    },
+    {
+      "image_id": "111.png",
+      "model_ns": [
+        3227302759,
+        2725869166,
+        2760261353
+      ],
+      "e2e_ns": [
+        3227370832,
+        2725926457,
+        2760318020
+      ]
+    },
+    {
+      "image_id": "146.png",
+      "model_ns": [
+        2777887030,
+        2753553853,
+        2750443905
+      ],
+      "e2e_ns": [
+        2777952499,
+        2753610624,
+        2750500832
+      ]
+    },
+    {
+      "image_id": "179.png",
+      "model_ns": [
+        2767227030,
+        2745180104,
+        2752108592
+      ],
+      "e2e_ns": [
+        2767290416,
+        2745235728,
+        2752164583
+      ]
+    },
+    {
+      "image_id": "22.png",
+      "model_ns": [
+        2948594635,
+        2748924478,
+        2739073072
+      ],
+      "e2e_ns": [
+        2948659582,
+        2748981718,
+        2739129374
+      ]
+    },
+    {
+      "image_id": "23.png",
+      "model_ns": [
+        2769285885,
+        2725784322,
+        2771642030
+      ],
+      "e2e_ns": [
+        2769350051,
+        2725838176,
+        2771699686
+      ]
+    },
+    {
+      "image_id": "493.png",
+      "model_ns": [
+        2758899687,
+        2700870416,
+        2801918385
+      ],
+      "e2e_ns": [
+        2758964322,
+        2700926717,
+        2801974635
+      ]
+    },
+    {
+      "image_id": "547.png",
+      "model_ns": [
+        2799783801,
+        2743835520,
+        2794965416
+      ],
+      "e2e_ns": [
+        2799849009,
+        2743892135,
+        2795022447
+      ]
+    },
+    {
+      "image_id": "55.png",
+      "model_ns": [
+        2784260937,
+        2776925260,
+        2793010259
+      ],
+      "e2e_ns": [
+        2784324947,
+        2776981197,
+        2793067031
+      ]
+    },
+    {
+      "image_id": "665.png",
+      "model_ns": [
+        2724130311,
+        2774726717,
+        2732488957
+      ],
+      "e2e_ns": [
+        2724194478,
+        2774783280,
+        2732546093
+      ]
+    },
+    {
+      "image_id": "669.png",
+      "model_ns": [
+        2775536197,
+        2743874426,
+        2747325676
+      ],
+      "e2e_ns": [
+        2775599009,
+        2743933228,
+        2747382603
+      ]
+    },
+    {
+      "image_id": "748.png",
+      "model_ns": [
+        2811285728,
+        2742574374,
+        2758225624
+      ],
+      "e2e_ns": [
+        2811354843,
+        2742629842,
+        2758282082
+      ]
+    },
+    {
+      "image_id": "778.png",
+      "model_ns": [
+        2775523905,
+        2730650885,
+        2761383020
+      ],
+      "e2e_ns": [
+        2775589478,
+        2730706769,
+        2761438541
+      ]
+    },
+    {
+      "image_id": "780.png",
+      "model_ns": [
+        2756796978,
+        2747541197,
+        2789097447
+      ],
+      "e2e_ns": [
+        2756860572,
+        2747597656,
+        2789152916
+      ]
+    },
+    {
+      "image_id": "79.png",
+      "model_ns": [
+        2760885416,
+        2757964635,
+        2762688176
+      ],
+      "e2e_ns": [
+        2760949843,
+        2758021145,
+        2762744687
+      ]
+    }
+  ],
+  "pss": {
+    "samples_mb": [],
+    "peak_mb": 0
+  },
+  "thermal": {
+    "before": "unavailable",
+    "after": "unavailable"
+  },
+  "output_paths": [
+    "outputs-mobileie-6ch\/1.png",
+    "outputs-mobileie-6ch\/111.png",
+    "outputs-mobileie-6ch\/146.png",
+    "outputs-mobileie-6ch\/179.png",
+    "outputs-mobileie-6ch\/22.png",
+    "outputs-mobileie-6ch\/23.png",
+    "outputs-mobileie-6ch\/493.png",
+    "outputs-mobileie-6ch\/547.png",
+    "outputs-mobileie-6ch\/55.png",
+    "outputs-mobileie-6ch\/665.png",
+    "outputs-mobileie-6ch\/669.png",
+    "outputs-mobileie-6ch\/748.png",
+    "outputs-mobileie-6ch\/778.png",
+    "outputs-mobileie-6ch\/780.png",
+    "outputs-mobileie-6ch\/79.png"
+  ],
+  "success": true
+}
